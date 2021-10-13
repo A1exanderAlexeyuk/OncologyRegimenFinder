@@ -15,9 +15,10 @@
 # limitations under the License.
 #' Create treatment regimens of a cohort
 #'
+#'
+#'
 #' @description
-#' Computes features using all drugs, conditions, procedures, etc. observed on or prior to the cohort
-#' index date.
+#'Creates treatment regimens from chosen classification code
 #'
 #' @template Connection
 #'
@@ -39,9 +40,12 @@
 #'@param generateVocabTable
 #'
 #'
-#' @return
-#' A data frame drug regimens.
+#'@param sampleSize
 #'
+#'
+#'
+#'  @return
+#' SQL table in writeDatabaseSchema contains regimenIngredientTable.
 #' @export
 
 createRegimens <- function(connectionDetails,
