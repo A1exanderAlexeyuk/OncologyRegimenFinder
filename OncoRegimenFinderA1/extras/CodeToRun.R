@@ -74,23 +74,27 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
     port = port,
     pathToDriver = pathToDriver)
 
-cohortDatabaseSchema <- "study_reference"
-cdmDatabaseSchema <- "full_201909_omop_v5"
+cohortDatabaseSchema <- 'your_db_schema'
+writeDatabaseSchema <- 'your_db_schema'
+cdmDatabaseSchema <- 'cdm_schema'
+cohortTable <- "cancer_cohort"
+regimenTable <- "cancer_regimens"
+regimenIngredientTable <- "hms_cancer_regimen_ingredients"
 vocabularyTable <- "regimen_voc_upd"
-cohortTable <- "as_cancer_cohort_test"
-regimenTable <- "as_cancer_regimens_test"
-regimenIngredientTable <- "as_cancer_regimen_ingredients_test"
-
-
+rawEventTable <- 'rawevent'
+dateLagInput <- 30
+#querySql(conn, "select * from alex_alexeyuk_results.regimen_voc_upd limit 1")
 OncoRegimenFinderA1::createRegimens(connectionDetails=connectionDetails,
                                     cdmDatabaseSchema=cdmDatabaseSchema,
                                     writeDatabaseSchema=writeDatabaseSchema,
                                     cohortTable = cohortTable,
                                     regimenTable = regimenTable,
+                                    rawEventTable = rawEventTable,
                                     regimenIngredientTable = regimenIngredientTable,
                                     vocabularyTable = vocabularyTable,
-                                    drugClassificationIdInput = 21601387,
+                                    drugClassificationIdInput = 21601387, # your ID
+                                    cancerConceptId = 4115276, # your ID
                                     dateLagInput,
-                                    regimenRepeats = 5,
-                                    generateVocabTable = TRUE,
+                                    regimenRepeats = 5, 
+                                    generateVocabTable = TRUE, 
                                     sampleSize = 999999999999)
