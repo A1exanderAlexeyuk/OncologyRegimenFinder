@@ -4,7 +4,7 @@ select c.person_id,
 from @cdmDatabaseSchema.condition_occurrence c
 where condition_concept_id in (
 	select descendant_concept_id as condition_concept_id from @cdmDatabaseSchema.concept_ancestor ca1
-	where ancestor_concept_id in (4115276) /* Cancer concept_id */
+	where ancestor_concept_id in (@cancerConceptId) /* Cancer concept_id */
 )
 group by c.person_id, c.condition_concept_id
 ),
@@ -31,10 +31,10 @@ inner join @cdmDatabaseSchema.concept c on c.concept_id = ca.ancestor_concept_id
   where de.drug_exposure_start_date >= ct.start_date - 30
 	and c.concept_id in (
 		  select descendant_concept_id as drug_concept_id from @cdmDatabaseSchema.concept_ancestor ca1
-		  where ancestor_concept_id in (21601387) /* Drug concept_id  */
+		  where ancestor_concept_id in (@drugClassificationIdInput) /* Drug concept_id  */
 )
 and c.concept_class_id = 'Ingredient'
 )
 select lower(concept_name) as concept_name, person_id, drug_exposure_start_date as ingredient_start_date, days_supply, start_date
-into alex_alexeyuk_results.rawevents
+into @writeDatabaseSchema.@rawEventTable
 from CTE_second
