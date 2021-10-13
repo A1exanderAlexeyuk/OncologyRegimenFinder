@@ -82,14 +82,15 @@ regimenTable <- "as_cancer_regimens_test"
 regimenIngredientTable <- "as_cancer_regimen_ingredients_test"
 
 
-OncoRegimenFinderA1::createRegimens(connectionDetails = connectionDetails,
-                                   cdmDatabaseSchema = cdmDatabaseSchema,
-                                   writeDatabaseSchema = cohortDatabaseSchema,
-                                   cohortTable = cohortTable,
-                                   regimenTable = regimenTable,
-                                   regimenIngredientTable = regimenIngredientTable,
-                                   vocabularyTable = vocabularyTable,
-                                   drugClassificationIdInput = 21601387,
-                                   dateLagInput = 30,
-                                   regimenRepeats = 5,
-                                   generateVocabTable = F)
+OncoRegimenFinderA1::createRegimens(connectionDetails=connectionDetails,
+                                    cdmDatabaseSchema=cdmDatabaseSchema,
+                                    writeDatabaseSchema=writeDatabaseSchema,
+                                    cohortTable = cohortTable,
+                                    regimenTable = regimenTable,
+                                    regimenIngredientTable = regimenIngredientTable,
+                                    vocabularyTable = vocabularyTable,
+                                    drugClassificationIdInput = 21601387,
+                                    dateLagInput,
+                                    regimenRepeats = 5,
+                                    generateVocabTable = TRUE,
+                                    sampleSize = 999999999999)
