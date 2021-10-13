@@ -28,6 +28,10 @@
 #'
 #' @template CohortTable
 #'
+#'
+#'@param   rawEventTable
+#'
+#'
 #' @param drugClassificationIdInput
 #'
 #'
@@ -52,10 +56,12 @@ createRegimens <- function(connectionDetails,
                             cdmDatabaseSchema,
                             writeDatabaseSchema,
                             cohortTable = cohortTable,
+                            rawEventTable = rawEventTable,
                             regimenTable = regimenTable,
                             regimenIngredientTable = regimenIngredientTable,
                             vocabularyTable = vocabularyTable,
                             drugClassificationIdInput = 21601387,
+                            cancerConceptId = 4115276,
                             dateLagInput,
                             regimenRepeats = 5,
                             generateVocabTable = TRUE,
@@ -104,14 +110,25 @@ createRegimens <- function(connectionDetails,
 
   for(i in c(1:regimenRepeats)){DatabaseConnector::executeSql(connection = connection, sql = sql)}
 
+
+  }
   sql <- SqlRender::render(getInsertIntoRegimenTable_f(),
-                          writeDatabaseSchema = writeDatabaseSchema,
-                          sampledRegimenTable = paste0(regimenTable,"_sampled"),
-                          regimenTable_f = paste0(regimenTable,"_f"))
+                           writeDatabaseSchema = writeDatabaseSchema,
+                           sampledRegimenTable = paste0(regimenTable,"_sampled"),
+                           regimenTable_f = paste0(regimenTable,"_f"))
 
   DatabaseConnector::executeSql(connection = connection, sql)
 
-  }
+  sql <- render(sql = getRawEvents(),
+                rawEventTable = rawEventTable,
+                cancerConceptId = cancerConceptId,
+                writeDatabaseSchema = cohortDatabaseSchema,
+                cdmDatabaseSchema = cdmDatabaseSchema,
+                drugClassificationIdInput = drugClassificationIdInput
+                )
+
+  executeSql(connection = connection, sql = sql)
+
   if(generateVocabTable){
 
     sql <- SqlRender::render(sql = getRegimenVocabulary(),
