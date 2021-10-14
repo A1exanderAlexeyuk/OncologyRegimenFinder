@@ -1,5 +1,10 @@
 getPath <- function() {
-  return("inst/sql")
+  if(connectionDetails$dbms == "postgresql"){
+    return("inst/sql/Postgres")
+    }
+  if(connectionDetails$dbms == "redshift"){
+    return("inst/sql/Redshift")
+    }
 }
 
 getThisPackageName <- function() {
