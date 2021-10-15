@@ -53,7 +53,7 @@
 #' @export
 
 createRegimens <- function(connectionDetails,
-                            cdmDatabaseSchema,
+                            cdmDatabaseSchema = "cdm_531",
                             writeDatabaseSchema,
                             cohortTable = cohortTable,
                             rawEventTable = rawEventTable,
@@ -124,7 +124,8 @@ createRegimens <- function(connectionDetails,
                 cancerConceptId = cancerConceptId,
                 writeDatabaseSchema = cohortDatabaseSchema,
                 cdmDatabaseSchema = cdmDatabaseSchema,
-                drugClassificationIdInput = drugClassificationIdInput
+                drugClassificationIdInput = drugClassificationIdInput,
+                dateLagInput = dateLagInput
                 )
 
   executeSql(connection = connection, sql = sql)
