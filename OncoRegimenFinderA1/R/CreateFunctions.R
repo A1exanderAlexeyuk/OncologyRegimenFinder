@@ -122,13 +122,19 @@ createRegimenFormatTable <- function(connection,
                                      cohortTable,
                                      regimenTable,
                                      regimenIngredientTable,
-                                     vocabularyTable){
-  sql <- SqlRender::render(getRegimenFormat(),
+                                     vocabularyTable,
+                                     generateVocabTable){
+  if(generateVocabTable){
+    sql_t <- getRegimenFormat()
+    }else{
+      sql_t <- getRegimenFormatWithoutVocabulary()
+    }
+  try(sql <- SqlRender::render(sql = sql_t,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
                            regimenIngredientTable = regimenIngredientTable,
-                           vocabularyTable = vocabularyTable)
+                           vocabularyTable = vocabularyTable), silent = TRUE)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 
