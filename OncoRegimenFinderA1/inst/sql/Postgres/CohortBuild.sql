@@ -59,7 +59,10 @@ select cs.concept_name,
        cs.ingredient_start_date,
        cs.ingredient_end_date
 from CTE_second cs
-inner join (select distinct person_id, row_number()over(order by person_id) rn from (SELECT distinct person_id FROM CTE_second) cs) c2 on c2.person_id = cs.person_id
+inner join (select distinct person_id,
+row_number()over(order by person_id) rn
+from (SELECT distinct person_id FROM
+CTE_second) cs) c2 on c2.person_id = cs.person_id
 );
 
 

@@ -1,9 +1,13 @@
 DROP TABLE IF EXISTS @writeDatabaseSchema.@regimenTable_tmp;
 
 WITH add_groups AS (
-  SELECT r1.person_id, r1.drug_era_id, r1.concept_name, r1.ingredient_start_date, min(r2.ingredient_start_date) as ingredient_start_date_new
+  SELECT r1.person_id, r1.drug_era_id, r1.concept_name,
+  r1.ingredient_start_date, min(r2.ingredient_start_date) as ingredient_start_date_new
   FROM @writeDatabaseSchema.@regimenTable r1
-  LEFT JOIN @writeDatabaseSchema.@regimenTable r2 on r1.person_id = r2.person_id and r2.ingredient_start_date <= (r1.ingredient_start_date) and r2.ingredient_start_date >= (r1.ingredient_start_date - @dateLagInput)
+  LEFT JOIN @writeDatabaseSchema.@regimenTable r2
+  on r1.person_id = r2.person_id and
+  r2.ingredient_start_date <= (r1.ingredient_start_date)
+  and r2.ingredient_start_date >= (r1.ingredient_start_date - @dateLagInput)
   GROUP BY r1.person_id, r1.drug_era_id, r1.concept_name, r1.ingredient_start_date
 ),
 regimens AS (
@@ -13,9 +17,13 @@ regimens AS (
   ORDER BY ingredient_start_date_new
 ),
 regimens_to_keep AS (
-SELECT rs.person_id, gs.drug_era_id, gs.concept_name, rs.ingredient_start_date_new as ingredient_start_date
+SELECT rs.person_id, gs.drug_era_id,
+gs.concept_name, rs.ingredient_start_date_new
+as ingredient_start_date
 FROM regimens rs
-LEFT JOIN add_groups gs on rs.person_id = gs.person_id and rs.ingredient_start_date_new = gs.ingredient_start_date_new
+LEFT JOIN add_groups gs on
+rs.person_id = gs.person_id and
+rs.ingredient_start_date_new = gs.ingredient_start_date_new
 WHERE contains_original_ingredient > 0
 ),
 updated_table AS (

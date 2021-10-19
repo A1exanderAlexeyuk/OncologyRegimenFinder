@@ -59,3 +59,5 @@ getRegimenVocabulary <- function(){
   SqlRender::readSql(file.path(getPath(),
                                "RegimenVocabulary.sql"))
 }
+
+

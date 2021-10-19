@@ -74,27 +74,26 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
     port = port,
     pathToDriver = pathToDriver)
 
-cohortDatabaseSchema <- 'your_db_schema'
-writeDatabaseSchema <- 'your_db_schema'
-cdmDatabaseSchema <- 'cdm_schema'
-cohortTable <- "cancer_cohort"
-regimenTable <- "cancer_regimens"
-regimenIngredientTable <- "hms_cancer_regimen_ingredients"
+cohortDatabaseSchema <- "study_reference"
+cdmDatabaseSchema <- "full_201909_omop_v5"
 vocabularyTable <- "regimen_voc_upd"
-rawEventTable <- 'rawevent'
-dateLagInput <- 30
-#querySql(conn, "select * from alex_alexeyuk_results.regimen_voc_upd limit 1")
-OncoRegimenFinderA1::createRegimens(connectionDetails=connectionDetails,
-                                    cdmDatabaseSchema=cdmDatabaseSchema,
-                                    writeDatabaseSchema=writeDatabaseSchema,
+cohortTable <- "as_cancer_cohort_test"
+regimenTable <- "as_cancer_regimens_test"
+regimenIngredientTable <- "as_cancer_regimen_ingredients_test"
+
+
+OncoRegimenFinderA1::createRegimens(connectionDetails,
+                                    cdmDatabaseSchema = "cdm_531",
+                                    writeDatabaseSchema,
                                     cohortTable = cohortTable,
-                                    regimenTable = regimenTable,
                                     rawEventTable = rawEventTable,
+                                    regimenTable = regimenTable,
                                     regimenIngredientTable = regimenIngredientTable,
                                     vocabularyTable = vocabularyTable,
-                                    drugClassificationIdInput = 21601387, # your ID
-                                    cancerConceptId = 4115276, # your ID
+                                    drugClassificationIdInput = 21601387,
+                                    cancerConceptId = 4115276,
                                     dateLagInput,
-                                    regimenRepeats = 5, 
-                                    generateVocabTable = TRUE, 
+                                    regimenRepeats = 5,
+                                    generateVocabTable = TRUE,
+                                    generateRawEvents = FALSE,
                                     sampleSize = 999999999999)

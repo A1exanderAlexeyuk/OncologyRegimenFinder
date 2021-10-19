@@ -29,7 +29,7 @@
 #' @template CohortTable
 #'
 #'
-#'@param   rawEventTable
+#' @param   rawEventTable
 #'
 #'
 #' @param drugClassificationIdInput
@@ -38,15 +38,15 @@
 #' @param dateLagInput
 #' .
 #'
-#'@param regimenRepeats
+#' @param regimenRepeats
 #'
 #'
-#'@param generateVocabTable
+#' @param generateVocabTable
 #'
 #'
-#'@param sampleSize
+#' @param sampleSize
 #'
-#'
+#' @param generateRawEvents
 #'
 #'  @return
 #' SQL table in writeDatabaseSchema contains regimenIngredientTable.
@@ -65,90 +65,53 @@ createRegimens <- function(connectionDetails,
                             dateLagInput,
                             regimenRepeats = 5,
                             generateVocabTable = TRUE,
+                            generateRawEvents = FALSE,
                             sampleSize = 999999999999) {
 
   connection <-  DatabaseConnector::connect(connectionDetails)
 
-  sql <- SqlRender::render(sql = getCohortBuild(),
-                           cdmDatabaseSchema = cdmDatabaseSchema,
-                           writeDatabaseSchema = writeDatabaseSchema,
-                           cohortTable = cohortTable,
-                           regimenTable = regimenTable,
-                           drugClassificationIdInput = drugClassificationIdInput)
+  createCohortTable(connection = connection,
+                    cdmDatabaseSchema = cdmDatabaseSchema,
+                    writeDatabaseSchema = writeDatabaseSchema,
+                    cohortTable = cohortTable,
+                    regimenTable = regimenTable,
+                    drugClassificationIdInput = drugClassificationIdInput)
 
-  DatabaseConnector::executeSql(connection = connection, sql = sql)
+  createSapmledRegimenTable(connection = connection,
+                            writeDatabaseSchema = writeDatabaseSchema,
+                            regimenTable = regimenTable,
+                            sampleSize = sampleSize)
 
-  sqlTemp <- SqlRender::render("SELECT max(rn) FROM @writeDatabaseSchema.@regimenTable;", writeDatabaseSchema = writeDatabaseSchema, regimenTable = regimenTable)
-  maxId <- DatabaseConnector::dbGetQuery(connection, sqlTemp)
-  message(paste0("Cohort contains ", maxId$max, " subjects"))
-  idGroups <- c(seq(1, maxId$max, sampleSize), maxId$max + 1)
-
-  sql <- SqlRender::render(getRegimenTable_f(),
-                          regimenTable_f = paste0(regimenTable,"_f"),
-                          writeDatabaseSchema = writeDatabaseSchema)
-
-  DatabaseConnector::executeSql(connection = connection, sql = sql)
-  for(g in c(1:(length(idGroups)-1))){
-
-    startId = idGroups[g]
-    endId = idGroups[g+1] - 1
-
-    message(paste0("Processing persons ",startId," to ",endId))
-    sql <- SqlRender::render(getInsertIntoSampledRegimenTable(),
-                             writeDatabaseSchema = writeDatabaseSchema,
-                             regimenTable = regimenTable,
-                             sampledRegimenTable = paste0(regimenTable,"_sampled"),
-                             start = startId,
-                             end = endId)
-
-    DatabaseConnector::executeSql(connection = connection, sql = sql)
-
-  sql <- SqlRender::render(sql = getRegimenCalculation(),
+  createRegimenCalculation(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
-                           dateLagInput= dateLagInput)
+                           dateLagInput= dateLagInput,
+                           regimenRepeats = regimenRepeats)
 
-  for(i in c(1:regimenRepeats)){DatabaseConnector::executeSql(connection = connection, sql = sql)}
-
-
-  }
-  sql <- SqlRender::render(getInsertIntoRegimenTable_f(),
+  InsertIntoRegimenTable_f(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
-                           sampledRegimenTable = paste0(regimenTable,"_sampled"),
-                           regimenTable_f = paste0(regimenTable,"_f"))
+                           regimenTable = regimenTable)
 
-  DatabaseConnector::executeSql(connection = connection, sql)
+  createRawEvents(connection = connection,
+                  rawEventTable = rawEventTable,
+                  cancerConceptId = cancerConceptId,
+                  writeDatabaseSchema = writeDatabaseSchema,
+                  cdmDatabaseSchema = cdmDatabaseSchema,
+                  drugClassificationIdInput = drugClassificationIdInput,
+                  dateLagInput = dateLagInput,
+                  generateRawEvents = generateRawEvents)
 
-  sql <- render(sql = getRawEvents(),
-                rawEventTable = rawEventTable,
-                cancerConceptId = cancerConceptId,
-                writeDatabaseSchema = cohortDatabaseSchema,
-                cdmDatabaseSchema = cdmDatabaseSchema,
-                drugClassificationIdInput = drugClassificationIdInput,
-                dateLagInput = dateLagInput
-                )
+  createVocabulary(connection = connection,
+                   writeDatabaseSchema = writeDatabaseSchema,
+                   cdmDatabaseSchema = cdmDatabaseSchema,
+                   vocabularyTable = vocabularyTable,
+                   generateVocabTable = generateVocabTable)
 
-  executeSql(connection = connection, sql = sql)
-
-  if(generateVocabTable){
-
-    sql <- SqlRender::render(sql = getRegimenVocabulary(),
-                             writeDatabaseSchema = writeDatabaseSchema,
-                             cdmDatabaseSchema = cdmDatabaseSchema,
-                             vocabularyTable = vocabularyTable)
-
-    DatabaseConnector::executeSql(connection = connection, sql = sql)
-
-  }
-
-  sql <- SqlRender::render(getRegimenFormat(),
+  createRegimenFormatTable(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
                            regimenIngredientTable = regimenIngredientTable,
                            vocabularyTable = vocabularyTable)
-
-  DatabaseConnector::executeSql(connection = connection, sql = sql)
-
 
 }
