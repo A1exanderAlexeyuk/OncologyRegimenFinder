@@ -1,11 +1,12 @@
-with cte as (SELECT  case when regimen in ("erlotinib",
+WITH cte AS (SELECT person_id, regimen_start_date, regimen_end_date
+      case when regimen in ("erlotinib",
                                 "gefitinib",
                                 "afatinib",
                                 "dacomitinib",
                                 "osimertinib")
               then 1 else 0 end AS 'EGFR_tyrosine_kinase_inhibitors',
 
-       case when regimen in ('crizotinib', 'ceritinib',
+      case when regimen in ('crizotinib', 'ceritinib',
                 'brigatinib', 'alectinib',
                 'lorlatinib', 'entrectinib',
                 'capmatinib', 'selpercatinib',
@@ -33,7 +34,11 @@ with cte as (SELECT  case when regimen in ("erlotinib",
 
  FROM @writeDatabaseSchema.@regimenIngredientTable )
 
-SELECT case when EGFR_tyrosine_kinase_inhibitors = 1
+SELECT DISTINCT c.cohort_definition_id, c.subject_id, c.cohort_start_date, 
+                c.cohort_end_date, op.observation_period_start_date, 
+                op.observation_period_end_date, d.death_date, 
+                concept.concept_name as gender, p.year_of_birth,
+       cte.*, case when EGFR_tyrosine_kinase_inhibitors = 1
         then  'Reimen_1'
 
       when Other_EGFR_tyrosine_kinase_inhibitors = 1
@@ -57,6 +62,19 @@ SELECT case when EGFR_tyrosine_kinase_inhibitors = 1
         then "Regimen_6"
 
       else 'Other' AS 'Regimens_categories'
-
-      FROM cte
-      )
+      
+FROM @cohortDatabaseSchema.@cohortTable c
+LEFT JOIN cte 
+  on cte.person_id = c.subject_id 
+  and cte.regimen_start_date >= DATEADD(day, -14, c.cohort_start_date)
+  and cte.regimen_end_date >= c.cohort_start_date
+  and cte.regimen_start_date <= c.cohort_end_date
+LEFT JOIN @cdmDatabaseSchema.observation_period op
+  on op.person_id = c.subject_id
+  and op.observation_period_start_date <= c.cohort_start_date
+  and op.observation_period_end_date >= c.cohort_end_date
+LEFT JOIN @cdmDatabaseSchema.@deathTable d on d.person_id = c.subject_id
+LEFT JOIN @cdmDatabaseSchema.person p on c.subject_id = p.person_id
+LEFT JOIN @cdmDatabaseSchema.concept on concept.concept_id = p.gender_concept_id
+ORDER BY c.cohort_definition_id, c.subject_id, cte.regimen_start_date
+    
