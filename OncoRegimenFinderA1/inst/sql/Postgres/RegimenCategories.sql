@@ -32,7 +32,7 @@ WITH cte AS (SELECT DISTINCT *,
       (case  when regimen in ('bevacizumab','ranibizumab','aflibercept','ramucirumab')
             then 1 else 0 end) AS anti_VEGF_mAb
 
- FROM writeDatabaseSchema.regimenIngredientTable)
+ FROM @writeDatabaseSchema.@regimenIngredientTable)
 
 SELECT cte.*,
 
