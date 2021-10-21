@@ -75,7 +75,9 @@ createRegimens <- function(connectionDetails,
                     writeDatabaseSchema = writeDatabaseSchema,
                     cohortTable = cohortTable,
                     regimenTable = regimenTable,
-                    drugClassificationIdInput = drugClassificationIdInput)
+                    drugClassificationIdInput = drugClassificationIdInput.
+                    cancerConceptId = cancerConceptId
+                    )
 
   createSapmledRegimenTable(connection = connection,
                             writeDatabaseSchema = writeDatabaseSchema,
