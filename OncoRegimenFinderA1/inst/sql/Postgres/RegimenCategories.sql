@@ -58,7 +58,10 @@ SELECT cte.*,
       when Single_agent + anti_VEGF_mAb >= 1 AND Single_agent = 1
       then 'Regimen_6'
 
-      else 'Other' end) AS Regimens_categories
+      else 'Other' end) AS Regimens_categories,
+      
+      ROW_NUMBER() OVER (PARTITION BY person_id
+	    Order by person_id, regimen_start_date) as Line_of_therapy
 
 FROM cte
 ORDER BY regimen_start_date, person_id
