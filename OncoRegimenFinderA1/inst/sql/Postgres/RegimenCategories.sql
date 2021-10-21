@@ -32,7 +32,7 @@ WITH cte AS (SELECT DISTINCT *,
       (case  when regimen in ('bevacizumab','ranibizumab','aflibercept','ramucirumab')
             then 1 else 0 end) AS anti_VEGF_mAb
 
- FROM alex_alexeyuk_results1.hms_cancer_regimen_ingredients limit 5000)
+ FROM writeDatabaseSchema.regimenIngredientTable)
 
 SELECT cte.*,
 
@@ -50,15 +50,15 @@ SELECT cte.*,
       when Platinum_doublet + anti_VEGF_mAb = 0 AND Anti_PD_1 + Anti_L_1
       + Anti_CTLA_4 >= 2
       then 'Regimen_3'
-      
+
       when Platinum_doublet + anti_VEGF_mAb >= 1 AND Anti_PD_1 + Anti_L_1
       + Anti_CTLA_4 = 0 AND  Platinum_doublet = 1
       then 'Regimen_5'
-      
+
       when Single_agent + anti_VEGF_mAb >= 1 AND Single_agent = 1
       then 'Regimen_6'
-      
+
       else 'Other' end) AS Regimens_categories
-      
+
 FROM cte
-ORDER BY regimen_start_date, person_id 
+ORDER BY regimen_start_date, person_id
