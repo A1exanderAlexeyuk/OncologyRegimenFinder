@@ -28,7 +28,7 @@ from CTE ct
 inner join @cdmDatabaseSchema.drug_exposure de on de.person_id = ct.person_id
 inner join @cdmDatabaseSchema.concept_ancestor ca on ca.descendant_concept_id = de.drug_concept_id
 inner join @cdmDatabaseSchema.concept c on c.concept_id = ca.ancestor_concept_id
-  where de.drug_exposure_start_date >= ct.start_date - 30
+  where de.drug_exposure_start_date >= ct.start_date - @dateLagInput
 	and c.concept_id in (
 		  select descendant_concept_id as drug_concept_id from @cdmDatabaseSchema.concept_ancestor ca1
 		  where ancestor_concept_id in (@drugClassificationIdInput) /* Drug concept_id  */
