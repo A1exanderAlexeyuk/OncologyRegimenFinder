@@ -59,3 +59,8 @@ getRegimenVocabulary <- function(){
   SqlRender::readSql(file.path(getPath(),
                                "RegimenVocabulary.sql"))
 }
+
+getRegimenFormatWithoutVocabulary <- function(){
+  SqlRender::readSql(file.path(getPath(),
+                               "RegimenFormatWithoutVocabulary.sql"))
+}
