@@ -13,44 +13,25 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
+
+
 #' Create treatment regimens of a cohort
 #'
 #'
-#'
-#' @description
-#'Creates treatment regimens from chosen classification code
-#'
-#' @template Connection
-#'
-#' @template CdmDatabaseSchema
-#'
-#' @template writeDatabaseSchema
-#'
-#' @template CohortTable
-#'
-#'
-#'@param   rawEventTable
-#'
-#'
-#' @param drugClassificationIdInput
-#'
-#'
-#' @param dateLagInput
-#' .
-#'
-#'@param regimenRepeats
-#'
-#'
-#'@param generateVocabTable
-#'
-#'
-#'@param sampleSize
-#'
-#'
-#'
-#'  @return
-#' SQL table in writeDatabaseSchema contains regimenIngredientTable.
-#' @export
+#' @param connectionDetails 
+#' @param cdmDatabaseSchema 
+#' @param writeDatabaseSchema 
+#' @param cohortTable 
+#' @param rawEventTable 
+#' @param regimenTable 
+#' @param regimenIngredientTable 
+#' @param vocabularyTable 
+#' @param drugClassificationIdInput 
+#' @param cancerConceptId An OMOP concept_id for cancer condition.
+#' @param dateLagInput The length of the gap in days
+#' @param regimenRepeats What does this argument do??
+#' @param generateVocabTable Should the vocab table be created in the database? (TRUE or FALSE). If TRUE this requires the Hemonc vocabulary in the CDM concept table.
+#' @param sampleSize The batch size for the regimen calculation algorithm.
 
 createRegimens <- function(connectionDetails,
                             cdmDatabaseSchema = "cdm_531",
@@ -78,7 +59,10 @@ createRegimens <- function(connectionDetails,
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 
-  sqlTemp <- SqlRender::render("SELECT max(rn) FROM @writeDatabaseSchema.@regimenTable;", writeDatabaseSchema = writeDatabaseSchema, regimenTable = regimenTable)
+  sqlTemp <- SqlRender::render("SELECT max(rn) FROM @writeDatabaseSchema.@regimenTable;", 
+                               writeDatabaseSchema = writeDatabaseSchema, 
+                               regimenTable = regimenTable)
+  
   maxId <- DatabaseConnector::dbGetQuery(connection, sqlTemp)
   message(paste0("Cohort contains ", maxId$max, " subjects"))
   idGroups <- c(seq(1, maxId$max, sampleSize), maxId$max + 1)
@@ -103,14 +87,11 @@ createRegimens <- function(connectionDetails,
 
     DatabaseConnector::executeSql(connection = connection, sql = sql)
 
-  sql <- SqlRender::render(sql = getRegimenCalculation(),
-                           writeDatabaseSchema = writeDatabaseSchema,
-                           regimenTable = regimenTable,
-                           dateLagInput= dateLagInput)
-
-  for(i in c(1:regimenRepeats)){DatabaseConnector::executeSql(connection = connection, sql = sql)}
-
-
+    sql <- SqlRender::render(sql = getRegimenCalculation(),
+                             writeDatabaseSchema = writeDatabaseSchema,
+                             regimenTable = regimenTable,
+                             dateLagInput= dateLagInput)
+    for(i in c(1:regimenRepeats)){DatabaseConnector::executeSql(connection = connection, sql = sql)}
   }
   sql <- SqlRender::render(getInsertIntoRegimenTable_f(),
                            writeDatabaseSchema = writeDatabaseSchema,
@@ -125,20 +106,17 @@ createRegimens <- function(connectionDetails,
                 writeDatabaseSchema = cohortDatabaseSchema,
                 cdmDatabaseSchema = cdmDatabaseSchema,
                 drugClassificationIdInput = drugClassificationIdInput,
-                dateLagInput = dateLagInput
-                )
+                dateLagInput = dateLagInput)
 
   executeSql(connection = connection, sql = sql)
 
   if(generateVocabTable){
-
     sql <- SqlRender::render(sql = getRegimenVocabulary(),
                              writeDatabaseSchema = writeDatabaseSchema,
                              cdmDatabaseSchema = cdmDatabaseSchema,
                              vocabularyTable = vocabularyTable)
 
     DatabaseConnector::executeSql(connection = connection, sql = sql)
-
   }
 
   sql <- SqlRender::render(getRegimenFormat(),
@@ -149,6 +127,4 @@ createRegimens <- function(connectionDetails,
                            vocabularyTable = vocabularyTable)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
-
-
 }

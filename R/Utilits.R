@@ -1,12 +1,15 @@
 getPath <- function() {
   if(connectionDetails$dbms == "postgresql"){
     return("inst/sql/Postgres")
-    }
+  }
   if(connectionDetails$dbms == "redshift"){
     return("inst/sql/Redshift")
-    }
+  } 
+  if(connectionDetails$dbms == "sqlite"){
+    return("inst/sql/Sqlite")
+  }
 }
-
+=
 getThisPackageName <- function() {
   return("OncoRegimenFinderA1")
 }
