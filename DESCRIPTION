@@ -15,3 +15,7 @@ Imports:
 	SqlRender (>= 1.6.7)
 Encoding: UTF-8
 LazyData: true
+Suggests: 
+    rmarkdown,
+    knitr
+VignetteBuilder: knitr
