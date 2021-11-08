@@ -1,3 +1,4 @@
+
 createCohortTable <- function(connection,
                               cdmDatabaseSchema,
                               writeDatabaseSchema,
@@ -5,7 +6,7 @@ createCohortTable <- function(connection,
                               regimenTable,
                               drugClassificationIdInput){
 
-  sql <- SqlRender::render(sql = getCohortBuild(),
+  sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
@@ -15,11 +16,11 @@ createCohortTable <- function(connection,
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
 
-createSapmledRegimenTable <- function(connection,
+createSampledRegimenTable <- function(connection,
                                       writeDatabaseSchema,
                                       regimenTable,
                                       sampleSize){
-  sqlTemp <- SqlRender::render("SELECT max(rn) FROM @writeDatabaseSchema.@regimenTable;",
+  sqlTemp <- SqlRender::render("SELECT max(rn) as max FROM @writeDatabaseSchema.@regimenTable;",
                                writeDatabaseSchema = writeDatabaseSchema,
                                regimenTable = regimenTable)
 
@@ -27,7 +28,7 @@ createSapmledRegimenTable <- function(connection,
   message(paste0("Cohort contains ", maxId$max, " subjects"))
   idGroups <- c(seq(1, maxId$max, sampleSize), maxId$max + 1)
 
-  sql <- SqlRender::render(getRegimenTable_f(),
+  sql <- SqlRender::render(readDbSql("RegimenTable_f.sql", connection@dbms),
                            regimenTable_f = paste0(regimenTable,"_f"),
                            writeDatabaseSchema = writeDatabaseSchema)
 
@@ -38,7 +39,7 @@ createSapmledRegimenTable <- function(connection,
     endId = idGroups[g+1] - 1
 
     message(paste0("Processing persons ",startId," to ",endId))
-    sql <- SqlRender::render(getInsertIntoSampledRegimenTable(),
+    sql <- SqlRender::render(readDbSql("InsertIntoSampledRegimenTable.sql", connection@dbms),
                              writeDatabaseSchema = writeDatabaseSchema,
                              regimenTable = regimenTable,
                              sampledRegimenTable = paste0(regimenTable,"_sampled"),
@@ -54,7 +55,7 @@ createRegimenCalculation <- function(connection,
                                      regimenTable,
                                      dateLagInput,
                                      regimenRepeats){
-  sql <- SqlRender::render(sql = getRegimenCalculation(),
+  sql <- SqlRender::render(sql = readDbSql("RegimenCalculation.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
                            dateLagInput= dateLagInput)
@@ -69,7 +70,7 @@ createRegimenCalculation <- function(connection,
 InsertIntoRegimenTable_f <- function(connection,
                                      writeDatabaseSchema,
                                      regimenTable){
-  sql <- SqlRender::render(getInsertIntoRegimenTable_f(),
+  sql <- SqlRender::render(readDbSql("InsertIntoRegimenTable_f.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            sampledRegimenTable = paste0(regimenTable,"_sampled"),
                            regimenTable_f = paste0(regimenTable,"_f"))
@@ -86,16 +87,15 @@ createRawEvents <- function(connection,
                             dateLagInput,
                             generateRawEvents){
   if(generateRawEvents){
-  sql <- render(sql = getRawEvents(),
-                rawEventTable = rawEventTable,
-                cancerConceptId = cancerConceptId,
-                writeDatabaseSchema = cohortDatabaseSchema,
-                cdmDatabaseSchema = cdmDatabaseSchema,
-                drugClassificationIdInput = drugClassificationIdInput,
-                dateLagInput = dateLagInput
-  )
-
-  executeSql(connection = connection, sql = sql)
+    sql <- render(sql = readDbSql("RawEvents.sql"),
+                  rawEventTable = rawEventTable,
+                  cancerConceptId = cancerConceptId,
+                  writeDatabaseSchema = cohortDatabaseSchema,
+                  cdmDatabaseSchema = cdmDatabaseSchema,
+                  drugClassificationIdInput = drugClassificationIdInput,
+                  dateLagInput = dateLagInput)
+  
+    executeSql(connection = connection, sql = sql)
   }
 }
 
@@ -104,16 +104,13 @@ createVocabulary <- function(connection,
                              cdmDatabaseSchema,
                              vocabularyTable,
                              generateVocabTable){
-  if(generateVocabTable){
+  
+  sql <- SqlRender::render(sql = readDbSql("RegimenVocabulary.sql", connection@dbms),
+                           writeDatabaseSchema = writeDatabaseSchema,
+                           cdmDatabaseSchema = cdmDatabaseSchema,
+                           vocabularyTable = vocabularyTable)
 
-    sql <- SqlRender::render(sql = getRegimenVocabulary(),
-                             writeDatabaseSchema = writeDatabaseSchema,
-                             cdmDatabaseSchema = cdmDatabaseSchema,
-                             vocabularyTable = vocabularyTable)
-
-    DatabaseConnector::executeSql(connection = connection, sql = sql)
-
-  }
+  DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
 
 
@@ -125,9 +122,9 @@ createRegimenFormatTable <- function(connection,
                                      vocabularyTable,
                                      generateVocabTable){
   if(generateVocabTable){
-    sql_t <- getRegimenFormat()
-    }else{
-      sql_t <- getRegimenFormatWithoutVocabulary()
+      sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
+    } else {
+      sql_t <- readDbSql("RegimenFormatWithoutVocabulary.sql", connection@dbms)
     }
   try(sql <- SqlRender::render(sql = sql_t,
                            writeDatabaseSchema = writeDatabaseSchema,

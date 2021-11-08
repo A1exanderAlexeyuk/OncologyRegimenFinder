@@ -1,69 +1,12 @@
-getPath <- function() {
-  if(connectionDetails$dbms == "postgresql"){
-    return("inst/sql/Postgres")
-    }
-  if(connectionDetails$dbms == "redshift"){
-    return("inst/sql/Redshift")
+readDbSql <- function(sql_filename, dbms) {
+  supported_dbms <- c("postgresql", "redshift", "sqlite", "bigquery")
+  if(!(dbms %in% supported_dbms)) {
+    stop(paste(dbms, "is not a supported database. \nSupported dbms are", paste(supported_dbms, collapse = ", "), "."))
   }
-  if(connectionDetails$dbms == "bigquery"){
-    return("inst/sql/BigQuery")
-  }
+  path <- system.file("sql", dbms, sql_filename, package = getThisPackageName(), mustWork = TRUE)
+  SqlRender::readSql(path)
 }
 
 getThisPackageName <- function() {
-  return("OncologyRegimenFinder")
-}
-
-getCohortBuild <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                       "CohortBuild.sql"))
-}
-
-getRegimenTable <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenTable.sql"))
-}
-
-getRegimenTable_f <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenTable_f.sql"))
-}
-getSampledRegimenTable <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "SampledRegimenTable.sql"))
-}
-
-getRegimenCalculation <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenCalculation.sql"))
-}
-
-getInsertIntoRegimenTable_f <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "InsertIntoRegimenTable_f.sql"))
-}
-
-getRawEvents <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RawEvents.sql"))
-}
-
-getRegimenFormat <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenFormat.sql"))
-}
-
-getInsertIntoSampledRegimenTable <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "InsertIntoSampledRegimenTable.sql"))
-}
-
-getRegimenVocabulary <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenVocabulary.sql"))
-}
-
-getRegimenFormatWithoutVocabulary <- function(){
-  SqlRender::readSql(file.path(getPath(),
-                               "RegimenFormatWithoutVocabulary.sql"))
+  return("OncoRegimenFinderA")
 }
