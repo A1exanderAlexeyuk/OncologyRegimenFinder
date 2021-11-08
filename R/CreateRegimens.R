@@ -1,72 +1,46 @@
-# Copyright 2021 Observational Health Data Sciences and Informatics
-#
-# This file is part of OncologyRegimenFinder
-#
-# Licensed under the Apache License, Version 2.0 (the "License");
-# you may not use this file except in compliance with the License.
-# You may obtain a copy of the License at
-#
-#     http://www.apache.org/licenses/LICENSE-2.0
-#
-# Unless required by applicable law or agreed to in writing, software
-# distributed under the License is distributed on an "AS IS" BASIS,
-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-# See the License for the specific language governing permissions and
-# limitations under the License.
-#' Create treatment regimens of a cohort
-#'
-#'
+#' Create an oncology drug regimen table in a CDM database
 #'
 #' @description
-#'Creates treatment regimens from chosen classification code
+#' Creates treatment regimens from a chosen classification code. All ingredient-level
+#' descendants of the `drugClassificationIdInput` will be used for regimen construction.
+#' Multiple ingredient exposures on the same day are combined into regimens using the
+#' OncoRegimenFinder algorithm.
 #'
-#' @param Connection
-#'
-#' @param CdmDatabaseSchema
-#'
+#' @param connectionDetails 
 #' @param writeDatabaseSchema
-#'
-#' @param CohortTable
-#'
-#'
-#' @param   rawEventTable
-#'
-#'
-#' @param drugClassificationIdInput
-#'
-#'
+#' @param rawEventTable
 #' @param dateLagInput
-#' .
-#'
 #' @param regimenRepeats
-#'
-#'
 #' @param generateVocabTable
-#'
-#'
 #' @param sampleSize
-#'
+#' @param cdmDatabaseSchema 
+#' @param cohortTable 
+#' @param regimenTable 
+#' @param regimenIngredientTable 
+#' @param vocabularyTable 
+#' @param drugClassificationIdInput 
+#' @param cancerConceptId 
 #' @param generateRawEvents
 #'
-#'  @return
-#' SQL table in writeDatabaseSchema contains regimenIngredientTable.
+#' @return
+#' This function does not return a value. It is called for its side effect of
+#' creating a new SQL table called `regimenIngredientTable` in `writeDatabaseSchema`.
 #' @export
-
 createRegimens <- function(connectionDetails,
-                            cdmDatabaseSchema,
-                            writeDatabaseSchema,
-                            cohortTable = cohortTable,
-                            rawEventTable = rawEventTable,
-                            regimenTable = regimenTable,
-                            regimenIngredientTable = regimenIngredientTable,
-                            vocabularyTable = vocabularyTable,
-                            drugClassificationIdInput = 21601387,
-                            cancerConceptId = 4115276,
-                            dateLagInput,
-                            regimenRepeats = 5,
-                            generateVocabTable = TRUE,
-                            generateRawEvents = FALSE,
-                            sampleSize = 999999999999) {
+                           cdmDatabaseSchema,
+                           writeDatabaseSchema,
+                           cohortTable,
+                           rawEventTable,
+                           regimenTable,
+                           regimenIngredientTable,
+                           vocabularyTable,
+                           drugClassificationIdInput = 21601387,
+                           cancerConceptId = 4115276,
+                           dateLagInput = 30,
+                           regimenRepeats = 5,
+                           generateVocabTable = TRUE,
+                           generateRawEvents = FALSE,
+                           sampleSize = 999999999999) {
 
   connection <-  DatabaseConnector::connect(connectionDetails)
 
@@ -75,8 +49,7 @@ createRegimens <- function(connectionDetails,
                     writeDatabaseSchema = writeDatabaseSchema,
                     cohortTable = cohortTable,
                     regimenTable = regimenTable,
-                    drugClassificationIdInput = drugClassificationIdInput
-                    )
+                    drugClassificationIdInput = drugClassificationIdInput)
 
   createSapmledRegimenTable(connection = connection,
                             writeDatabaseSchema = writeDatabaseSchema,
@@ -101,18 +74,18 @@ createRegimens <- function(connectionDetails,
                   drugClassificationIdInput = drugClassificationIdInput,
                   dateLagInput = dateLagInput,
                   generateRawEvents = generateRawEvents)
-
-  createVocabulary(connection = connection,
-                   writeDatabaseSchema = writeDatabaseSchema,
-                   cdmDatabaseSchema = cdmDatabaseSchema,
-                   vocabularyTable = vocabularyTable,
-                   generateVocabTable = generateVocabTable)
-
+  
+  if(generateVocabTable) {
+    createVocabulary(connection = connection,
+                     writeDatabaseSchema = writeDatabaseSchema,
+                     cdmDatabaseSchema = cdmDatabaseSchema,
+                     vocabularyTable = vocabularyTable)
+  }
+  
   createRegimenFormatTable(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
                            regimenIngredientTable = regimenIngredientTable,
                            vocabularyTable = vocabularyTable)
-
 }
