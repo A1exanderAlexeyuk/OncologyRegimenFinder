@@ -11,7 +11,7 @@ getPath <- function() {
 }
 
 getThisPackageName <- function() {
-  return("OncoRegimenFinderA1")
+  return("OncologyRegimenFinder")
 }
 
 getCohortBuild <- function(){
