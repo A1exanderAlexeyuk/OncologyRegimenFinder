@@ -7,7 +7,8 @@ WITH add_groups AS (
   GROUP BY r1.person_id, r1.drug_era_id, r1.concept_name, r1.ingredient_start_date
 ),
 regimens AS (
-  SELECT person_id, ingredient_start_date_new, MAX(CASE WHEN ingredient_start_date = ingredient_start_date_new THEN 1 ELSE 0 END) as contains_original_ingredient
+  SELECT person_id, ingredient_start_date_new,
+  MAX(CASE WHEN ingredient_start_date = ingredient_start_date_new THEN 1 ELSE 0 END) as contains_original_ingredient
   FROM add_groups g
   GROUP BY ingredient_start_date_new, person_id
   ORDER BY ingredient_start_date_new
@@ -41,3 +42,5 @@ INSERT INTO  @writeDatabaseSchema.@regimenTable (
 SELECT * FROM @writeDatabaseSchema.@regimenTable_tmp);
 
 DROP TABLE IF EXISTS @writeDatabaseSchema.@regimenTable_tmp;
+
+

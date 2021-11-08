@@ -1,6 +1,6 @@
 with CTE as (
 select c1.concept_name as reg_name,
-		 listagg(lower(c2.concept_name), ',') within group (order by lower(c2.concept_name) asc) as combo_name,
+		 string_agg(lower(c2.concept_name), ',' order by lower(c2.concept_name)) as combo_name,
 		 c1.concept_id
 from @cdmDatabaseSchema.concept_relationship
 join @cdmDatabaseSchema.concept c1 on c1.concept_id=concept_id_1

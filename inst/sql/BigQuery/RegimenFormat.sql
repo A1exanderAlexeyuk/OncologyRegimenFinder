@@ -14,9 +14,10 @@ i.ingredient_start_date, i.ingredient_end_date,
         over (partition by cte.regimen_start_date, cte.person_id) as regimen_end_date
 into @writeDatabaseSchema.@regimenIngredientTable
 from @writeDatabaseSchema.@regimenTable orig
-left join cte on cte.person_id = orig.person_id and
-cte.regimen_start_date = orig.ingredient_start_date
+left join cte on cte.person_id = orig.person_id
+and cte.regimen_start_date = orig.ingredient_start_date
 left join @writeDatabaseSchema.@cohortTable i on
 i.person_id = orig.person_id and i.drug_era_id = orig.drug_era_id
-left join @writeDatabaseSchema.@vocabularyTable vt on cte.regimen = vt.combo_name
+left join @writeDatabaseSchema.@vocabularyTable vt on
+cte.regimen = vt.combo_name
 order by cte.person_id, regimen_start_date

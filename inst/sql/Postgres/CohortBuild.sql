@@ -21,16 +21,6 @@ CREATE TABLE @writeDatabaseSchema.@cohortTable (
        ingredient_end_date date
 ) ;
 
-WITH cte as (
-select c.person_id,
-	   min(c.condition_start_date) as start_date
-from @cdmDatabaseSchema.condition_occurrence c
-where condition_concept_id in (
-	select descendant_concept_id as condition_concept_id from @cdmDatabaseSchema.concept_ancestor ca1
-	where ancestor_concept_id in (4274025) /* Cancer concept_id */
-)
-group by c.person_id, c.condition_concept_id
-)
 
 insert into @writeDatabaseSchema.@cohortTable
 (with CTE_second as (
@@ -60,16 +50,12 @@ select cs.concept_name,
 from CTE_second cs
 inner join (select distinct person_id,
 row_number()over(order by person_id) rn
-from (SELECT distinct CTE_second.person_id FROM
-CTE_second
-inner join cte ON cte.person_id = CTE_second.person_id) cs)
-c2 on c2.person_id = cs.person_id
+from (SELECT distinct person_id FROM
+CTE_second) cs) c2 on c2.person_id = cs.person_id
 );
 
 
 insert into  @writeDatabaseSchema.@regimenTable
 (select *
 from @writeDatabaseSchema.@cohortTable);
-
-
 
