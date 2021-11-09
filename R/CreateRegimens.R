@@ -13,43 +13,33 @@
 # WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 # See the License for the specific language governing permissions and
 # limitations under the License.
-#' Create treatment regimens of a cohort
-#'
-#'
+#' Create an oncology drug regimen table in a CDM database
 #'
 #' @description
-#'Creates treatment regimens from chosen classification code
+#' Creates treatment regimens from a chosen classification code. All ingredient-level
+#' descendants of the `drugClassificationIdInput` will be used for regimen construction.
+#' Multiple ingredient exposures on the same day are combined into regimens using the
+#' OncoRegimenFinder algorithm.
 #'
-#' @param Connection
-#'
-#' @param CdmDatabaseSchema
-#'
+#' @param connectionDetails 
 #' @param writeDatabaseSchema
-#'
-#' @param CohortTable
-#'
-#'
-#' @param   rawEventTable
-#'
-#'
-#' @param drugClassificationIdInput
-#'
-#'
+#' @param rawEventTable
 #' @param dateLagInput
-#' .
-#'
 #' @param regimenRepeats
-#'
-#'
 #' @param generateVocabTable
-#'
-#'
 #' @param sampleSize
-#'
+#' @param cdmDatabaseSchema 
+#' @param cohortTable 
+#' @param regimenTable 
+#' @param regimenIngredientTable 
+#' @param vocabularyTable 
+#' @param drugClassificationIdInput 
+#' @param cancerConceptId 
 #' @param generateRawEvents
 #'
-#'  @return
-#' SQL table in writeDatabaseSchema contains regimenIngredientTable.
+#' @return
+#' This function does not return a value. It is called for its side effect of
+#' creating a new SQL table called `regimenIngredientTable` in `writeDatabaseSchema`.
 #' @export
 
 createRegimens <- function(connectionDetails,
@@ -63,7 +53,6 @@ createRegimens <- function(connectionDetails,
                             drugClassificationIdInput = 21601387,
                             cancerConceptId = 4115276,
                             dateLagInput,
-                            regimenRepeats = 5,
                             generateVocabTable = TRUE,
                             generateRawEvents = FALSE,
                             sampleSize = 999999999999) {
@@ -86,8 +75,7 @@ createRegimens <- function(connectionDetails,
   createRegimenCalculation(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
-                           dateLagInput= dateLagInput,
-                           regimenRepeats = regimenRepeats)
+                           dateLagInput= dateLagInput)
 
   InsertIntoRegimenTable_f(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
