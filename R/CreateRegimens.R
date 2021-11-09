@@ -6,19 +6,19 @@
 #' Multiple ingredient exposures on the same day are combined into regimens using the
 #' OncoRegimenFinder algorithm.
 #'
-#' @param connectionDetails 
+#' @param connectionDetails
 #' @param writeDatabaseSchema
 #' @param rawEventTable
 #' @param dateLagInput
 #' @param generateVocabTable
 #' @param sampleSize
-#' @param cdmDatabaseSchema 
-#' @param cohortTable 
-#' @param regimenTable 
-#' @param regimenIngredientTable 
-#' @param vocabularyTable 
-#' @param drugClassificationIdInput 
-#' @param cancerConceptId 
+#' @param cdmDatabaseSchema
+#' @param cohortTable
+#' @param regimenTable
+#' @param regimenIngredientTable
+#' @param vocabularyTable
+#' @param drugClassificationIdInput
+#' @param cancerConceptId
 #' @param generateRawEvents
 #'
 #' @return
@@ -27,19 +27,19 @@
 #' @export
 
 createRegimens <- function(connectionDetails,
-                            cdmDatabaseSchema,
-                            writeDatabaseSchema,
-                            cohortTable = cohortTable,
-                            rawEventTable = rawEventTable,
-                            regimenTable = regimenTable,
-                            regimenIngredientTable = regimenIngredientTable,
-                            vocabularyTable = vocabularyTable,
-                            drugClassificationIdInput = 21601387,
-                            cancerConceptId = 4115276,
-                            dateLagInput,
-                            generateVocabTable = TRUE,
-                            generateRawEvents = FALSE,
-                            sampleSize = 999999999999) {
+                           cdmDatabaseSchema,
+                           writeDatabaseSchema,
+                           cohortTable = cohortTable,
+                           rawEventTable = rawEventTable,
+                           regimenTable = regimenTable,
+                           regimenIngredientTable = regimenIngredientTable,
+                           #vocabularyTable = vocabularyTable,
+                           drugClassificationIdInput = 21601387,
+                           cancerConceptId = 4115276,
+                           dateLagInput,
+                           generateVocabTable = FALSE,
+                           generateRawEvents = FALSE,
+                           sampleSize = 999999999999) {
 
   connection <-  DatabaseConnector::connect(connectionDetails)
 
@@ -49,21 +49,21 @@ createRegimens <- function(connectionDetails,
                     cohortTable = cohortTable,
                     regimenTable = regimenTable,
                     drugClassificationIdInput = drugClassificationIdInput
-                    )
+  )
 
-  createSapmledRegimenTable(connection = connection,
-                            writeDatabaseSchema = writeDatabaseSchema,
-                            regimenTable = regimenTable,
-                            sampleSize = sampleSize)
+  # createSapmledRegimenTable(connection = connection,
+  #                           writeDatabaseSchema = writeDatabaseSchema,
+  #                           regimenTable = regimenTable,
+  #                           sampleSize = sampleSize)
 
   createRegimenCalculation(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
                            dateLagInput= dateLagInput)
 
-  InsertIntoRegimenTable_f(connection = connection,
-                           writeDatabaseSchema = writeDatabaseSchema,
-                           regimenTable = regimenTable)
+  # InsertIntoRegimenTable_f(connection = connection,
+  #                          writeDatabaseSchema = writeDatabaseSchema,
+  #                          regimenTable = regimenTable)
 
   createRawEvents(connection = connection,
                   rawEventTable = rawEventTable,
@@ -74,17 +74,18 @@ createRegimens <- function(connectionDetails,
                   dateLagInput = dateLagInput,
                   generateRawEvents = generateRawEvents)
 
-  createVocabulary(connection = connection,
-                   writeDatabaseSchema = writeDatabaseSchema,
-                   cdmDatabaseSchema = cdmDatabaseSchema,
-                   vocabularyTable = vocabularyTable,
-                   generateVocabTable = generateVocabTable)
+  # createVocabulary(connection = connection,
+  #                  writeDatabaseSchema = writeDatabaseSchema,
+  #                  cdmDatabaseSchema = cdmDatabaseSchema,
+  #                  vocabularyTable = vocabularyTable,
+  #                  generateVocabTable = generateVocabTable)
 
   createRegimenFormatTable(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           regimenIngredientTable = regimenIngredientTable,
-                           vocabularyTable = vocabularyTable)
+                           regimenIngredientTable = regimenIngredientTable
+                           #vocabularyTable = vocabularyTable
+                           )
 
 }

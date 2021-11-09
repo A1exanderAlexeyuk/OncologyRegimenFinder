@@ -16,7 +16,6 @@ createRegimens(
   drugClassificationIdInput = 21601387,
   cancerConceptId = 4115276,
   dateLagInput,
-  regimenRepeats = 5,
   generateVocabTable = TRUE,
   generateRawEvents = FALSE,
   sampleSize = 999999999999
@@ -31,8 +30,6 @@ createRegimens(
 
 \item{dateLagInput}{.}
 
-\item{regimenRepeats}{}
-
 \item{generateVocabTable}{}
 
 \item{generateRawEvents}{@return
@@ -45,6 +42,8 @@ SQL table in writeDatabaseSchema contains regimenIngredientTable.}
 \item{CdmDatabaseSchema}{}
 
 \item{CohortTable}{}
+
+\item{regimenRepeats}{}
 }
 \description{
 Creates treatment regimens from chosen classification code
