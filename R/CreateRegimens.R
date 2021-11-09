@@ -10,7 +10,6 @@
 #' @param writeDatabaseSchema
 #' @param rawEventTable
 #' @param dateLagInput
-#' @param regimenRepeats
 #' @param generateVocabTable
 #' @param sampleSize
 #' @param cdmDatabaseSchema 
