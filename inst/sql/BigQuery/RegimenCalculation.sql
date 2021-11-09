@@ -49,9 +49,9 @@ DROP TABLE IF EXISTS @writeDatabaseSchema.@regimenTable;
 CREATE TABLE @writeDatabaseSchema.@regimenTable (
        person_id bigint not null,
        drug_era_id bigint,
-       concept_name varchar(max),
+       concept_name string,
        ingredient_start_date date not null
-) DISTKEY(person_id) SORTKEY(person_id, ingredient_start_date);
+);
 
 INSERT INTO  @writeDatabaseSchema.@regimenTable (
 SELECT * FROM @writeDatabaseSchema.@regimenTable_tmp);
