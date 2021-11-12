@@ -20,6 +20,11 @@
 #' @param drugClassificationIdInput
 #' @param cancerConceptId
 #' @param generateRawEvents
+#' @param addAntineoplasticAgents
+#' @param addEndocrineTherapy
+#' @param addImmunostimulants
+#' @param addImmunosuppressants
+#'
 #'
 #' @return
 #' This function does not return a value. It is called for its side effect of
@@ -33,37 +38,34 @@ createRegimens <- function(connectionDetails,
                            rawEventTable = rawEventTable,
                            regimenTable = regimenTable,
                            regimenIngredientTable = regimenIngredientTable,
-                           #vocabularyTable = vocabularyTable,
-                           drugClassificationIdInput = 21601387,
+                           vocabularyTable = vocabularyTable,
+                           addAntineoplasticAgents = TRUE,
+                           addEndocrineTherapy = FALSE,
+                           addImmunostimulants = FALSE,
+                           addImmunosuppressants = FALSE,
                            cancerConceptId = 4115276,
-                           dateLagInput,
+                           dateLagInput = 30,
                            generateVocabTable = FALSE,
-                           generateRawEvents = FALSE,
-                           sampleSize = 999999999999) {
+                           generateRawEvents = FALSE
+                           ){
 
   connection <-  DatabaseConnector::connect(connectionDetails)
 
-  createCohortTable(connection = connection,
-                    cdmDatabaseSchema = cdmDatabaseSchema,
-                    writeDatabaseSchema = writeDatabaseSchema,
-                    cohortTable = cohortTable,
-                    regimenTable = regimenTable,
-                    drugClassificationIdInput = drugClassificationIdInput
+  createCohortTable(connection,
+                    cdmDatabaseSchema,
+                    writeDatabaseSchema,
+                    cohortTable,
+                    regimenTable,
+                    addAntineoplasticAgents = addAntineoplasticAgents,
+                    addEndocrineTherapy = addEndocrineTherapy,
+                    addImmunostimulants = addImmunostimulants,
+                    addImmunosuppressants = addImmunosuppressants
   )
-
-  # createSapmledRegimenTable(connection = connection,
-  #                           writeDatabaseSchema = writeDatabaseSchema,
-  #                           regimenTable = regimenTable,
-  #                           sampleSize = sampleSize)
 
   createRegimenCalculation(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
                            dateLagInput= dateLagInput)
-
-  # InsertIntoRegimenTable_f(connection = connection,
-  #                          writeDatabaseSchema = writeDatabaseSchema,
-  #                          regimenTable = regimenTable)
 
   createRawEvents(connection = connection,
                   rawEventTable = rawEventTable,
@@ -74,18 +76,18 @@ createRegimens <- function(connectionDetails,
                   dateLagInput = dateLagInput,
                   generateRawEvents = generateRawEvents)
 
-  # createVocabulary(connection = connection,
-  #                  writeDatabaseSchema = writeDatabaseSchema,
-  #                  cdmDatabaseSchema = cdmDatabaseSchema,
-  #                  vocabularyTable = vocabularyTable,
-  #                  generateVocabTable = generateVocabTable)
+  createVocabulary(connection = connection,
+                   writeDatabaseSchema = writeDatabaseSchema,
+                   cdmDatabaseSchema = cdmDatabaseSchema,
+                   vocabularyTable = vocabularyTable,
+                   generateVocabTable = generateVocabTable)
 
   createRegimenFormatTable(connection = connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           regimenIngredientTable = regimenIngredientTable
-                           #vocabularyTable = vocabularyTable
+                           regimenIngredientTable = regimenIngredientTable,
+                           vocabularyTable = vocabularyTable
                            )
 
 }

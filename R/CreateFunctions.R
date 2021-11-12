@@ -3,7 +3,23 @@ createCohortTable <- function(connection,
                               writeDatabaseSchema,
                               cohortTable,
                               regimenTable,
-                              drugClassificationIdInput){
+                              addAntineoplasticAgents = TRUE,
+                              addEndocrineTherapy = TRUE,
+                              addImmunostimulants = TRUE,
+                              addImmunosuppressants = TRUE){
+  drugClassificationIdInput <- c()
+  if(addAntineoplasticAgents){
+    drugClassificationIdInput <- append(21601387, drugClassificationIdInput)
+  }
+  if(addEndocrineTherapy){
+    drugClassificationIdInput <- append(21603812, drugClassificationIdInput)
+  }
+  if(addImmunostimulants){
+    drugClassificationIdInput <- append(21603848, drugClassificationIdInput)
+  }
+  if(addImmunosuppressants){
+    drugClassificationIdInput <- append(21603890, drugClassificationIdInput)
+  }
 
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
                            cdmDatabaseSchema = cdmDatabaseSchema,
@@ -14,44 +30,6 @@ createCohortTable <- function(connection,
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
-
-# createSapmledRegimenTable <- function(connection,
-#                                       writeDatabaseSchema,
-#                                       regimenTable,
-#                                       sampleSize){
-#   if(connection@dbms == 'bigquery'){
-#     ParallelLogger::logInfo("Sampled table won't be created")
-#   }else{
-#     sqlTemp <- SqlRender::render("SELECT max(rn) as max FROM @writeDatabaseSchema.@regimenTable;",
-#                                  writeDatabaseSchema = writeDatabaseSchema,
-#                                  regimenTable = regimenTable)
-#
-#     maxId <- DatabaseConnector::dbGetQuery(connection, sqlTemp)
-#     message(paste0("Cohort contains ", maxId$max, " subjects"))
-#     idGroups <- c(seq(1, maxId$max, sampleSize), maxId$max + 1)
-#
-#     sql <- SqlRender::render(readDbSql("RegimenTable_f.sql", connection@dbms),
-#                              regimenTable_f = paste0(regimenTable,"_f"),
-#                              writeDatabaseSchema = writeDatabaseSchema)
-#
-#     DatabaseConnector::executeSql(connection = connection, sql = sql)
-#     for(g in c(1:(length(idGroups)-1))){
-#
-#       startId = idGroups[g]
-#       endId = idGroups[g+1] - 1
-#
-#       message(paste0("Processing persons ",startId," to ",endId))
-#       sql <- SqlRender::render(readDbSql("InsertIntoSampledRegimenTable.sql", connection@dbms),
-#                                writeDatabaseSchema = writeDatabaseSchema,
-#                                regimenTable = regimenTable,
-#                                sampledRegimenTable = paste0(regimenTable,"_sampled"),
-#                                start = startId,
-#                                end = endId)
-#
-#       DatabaseConnector::executeSql(connection = connection, sql = sql)
-#     }
-#   }
-# }
 
 createRegimenCalculation <- function(connection,
                                      writeDatabaseSchema,
@@ -66,17 +44,6 @@ createRegimenCalculation <- function(connection,
 }
 
 
-# InsertIntoRegimenTable_f <- function(connection,
-#                                      writeDatabaseSchema,
-#                                      regimenTable){
-#   sql <- SqlRender::render(readDbSql("InsertIntoRegimenTable_f.sql", connection@dbms),
-#                            writeDatabaseSchema = writeDatabaseSchema,
-#                            sampledRegimenTable = paste0(regimenTable,"_sampled"),
-#                            regimenTable_f = paste0(regimenTable,"_f"))
-#
-#   DatabaseConnector::executeSql(connection = connection, sql)
-# }
-
 createRawEvents <- function(connection,
                             rawEventTable,
                             cancerConceptId,
@@ -86,31 +53,36 @@ createRawEvents <- function(connection,
                             dateLagInput,
                             generateRawEvents){
   if(generateRawEvents){
-    sql <- render(sql = readDbSql("RawEvents.sql"),
-                  rawEventTable = rawEventTable,
-                  cancerConceptId = cancerConceptId,
-                  writeDatabaseSchema = cohortDatabaseSchema,
-                  cdmDatabaseSchema = cdmDatabaseSchema,
-                  drugClassificationIdInput = drugClassificationIdInput,
-                  dateLagInput = dateLagInput)
+    sql <- SqlRender::render(sql = readDbSql("RawEvents.sql"),
+                            rawEventTable = rawEventTable,
+                            cancerConceptId = cancerConceptId,
+                            writeDatabaseSchema = writeDatabaseSchema,
+                            cdmDatabaseSchema = cdmDatabaseSchema,
+                            drugClassificationIdInput = drugClassificationIdInput,
+                            dateLagInput = dateLagInput)
 
-    executeSql(connection = connection, sql = sql)
+    DatabaseConnector::executeSql(connection = connection, sql = sql)
   }
 }
 
-# createVocabulary <- function(connection,
-#                              writeDatabaseSchema,
-#                              cdmDatabaseSchema,
-#                              vocabularyTable,
-#                              generateVocabTable){
-#
-#   sql <- SqlRender::render(sql = readDbSql("RegimenVocabulary.sql", connection@dbms),
-#                            writeDatabaseSchema = writeDatabaseSchema,
-#                            cdmDatabaseSchema = cdmDatabaseSchema,
-#                            vocabularyTable = vocabularyTable)
-#
-#   DatabaseConnector::executeSql(connection = connection, sql = sql)
-# }
+createVocabulary <- function(connection,
+                             writeDatabaseSchema,
+                             cdmDatabaseSchema,
+                             vocabularyTable,
+                             generateVocabTable){
+  if(generateVocabTable & connection@dbms !='bigquery'){
+  sql <- SqlRender::render(sql = readDbSql("RegimenVocabulary.sql", connection@dbms),
+                           writeDatabaseSchema = writeDatabaseSchema,
+                           cdmDatabaseSchema = cdmDatabaseSchema,
+                           vocabularyTable = vocabularyTable)
+
+  DatabaseConnector::executeSql(connection = connection, sql = sql)
+  } else{
+
+    ParallelLogger::logInfo("Vocabulary will not be created")
+
+  }
+}
 
 
 createRegimenFormatTable <- function(connection,
@@ -129,8 +101,8 @@ createRegimenFormatTable <- function(connection,
                                writeDatabaseSchema = writeDatabaseSchema,
                                cohortTable = cohortTable,
                                regimenTable = regimenTable,
-                               regimenIngredientTable = regimenIngredientTable
-                               #vocabularyTable = vocabularyTable
+                               regimenIngredientTable = regimenIngredientTable,
+                               vocabularyTable = vocabularyTable
                                ), silent = TRUE)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
