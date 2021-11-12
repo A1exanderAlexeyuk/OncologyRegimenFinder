@@ -10,9 +10,16 @@ CREATE table @writeDatabaseSchema.@regimenIngredientTable (
   regimen_end_date date
 );
 
-INSERT INTO @writeDatabaseSchema.@regimenIngredientTable (person_id, drug_era_id, ingredient, ingredient_start_date, ingredient_end_date,
-        regimen,regimen_start_date, regimen_end_date)
-
+INSERT INTO @writeDatabaseSchema.@regimenIngredientTable (
+  person_id,
+  drug_era_id,
+  ingredient,
+  ingredient_start_date,
+  ingredient_end_date,
+  regimen,
+  regimen_start_date,
+  regimen_end_date
+  )
 with
 cte as (
 select r.person_id, r.ingredient_start_date as regimen_start_date,
@@ -25,7 +32,8 @@ group by r.person_id, r.ingredient_start_date
 select cte.person_id, orig.drug_era_id,
 i.concept_name as ingredient, i.ingredient_start_date, i.ingredient_end_date,
         cte.regimen, cte.regimen_start_date,
-        max(i.ingredient_end_date) over (partition by cte.regimen_start_date, cte.person_id) as regimen_end_date
+        max(i.ingredient_end_date) over (partition by
+        cte.regimen_start_date, cte.person_id) as regimen_end_date
 from @writeDatabaseSchema.@regimenTable orig
 left join cte on cte.person_id = orig.person_id and
 cte.regimen_start_date = orig.ingredient_start_date

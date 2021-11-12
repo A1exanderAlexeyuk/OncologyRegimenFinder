@@ -1,4 +1,28 @@
 drop table if exists  @writeDatabaseSchema.@regimenIngredientTable;
+CREATE table @writeDatabaseSchema.@regimenIngredientTable (
+  person_id bigint,
+  drug_era_id bigint,
+  ingredient string,
+  ingredient_start_date date,
+  ingredient_end_date date,
+  regimen string,
+  hemonc_concept_id bigint,
+  reg_name string,
+  regimen_start_date date,
+  regimen_end_date date
+);
+INSERT INTO @writeDatabaseSchema.@regimenIngredientTable (
+  person_id,
+  drug_era_id,
+  ingredient,
+  ingredient_start_date,
+  ingredient_end_date,
+  regimen,
+  hemonc_concept_id,
+  reg_name,
+  regimen_start_date,
+  regimen_end_date
+)
 
 with cte as (
 select r.person_id, r.ingredient_start_date as regimen_start_date,
@@ -12,7 +36,6 @@ i.ingredient_start_date, i.ingredient_end_date,
         cte.regimen, vt.concept_id as hemonc_concept_id,
         vt.reg_name, cte.regimen_start_date, max(i.ingredient_end_date)
         over (partition by cte.regimen_start_date, cte.person_id) as regimen_end_date
-into @writeDatabaseSchema.@regimenIngredientTable
 from @writeDatabaseSchema.@regimenTable orig
 left join cte on cte.person_id = orig.person_id
 and cte.regimen_start_date = orig.ingredient_start_date
