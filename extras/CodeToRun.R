@@ -77,23 +77,25 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 cohortDatabaseSchema <- "study_reference"
 cdmDatabaseSchema <- "full_201909_omop_v5"
 vocabularyTable <- "regimen_voc_upd"
-cohortTable <- "as_cancer_cohort_test"
-regimenTable <- "as_cancer_regimens_test"
-regimenIngredientTable <- "as_cancer_regimen_ingredients_test"
+cohortTable <- "cancer_cohort"
+regimenTable <- "cancer_regimens"
+regimenIngredientTable <- "regimen_ingredient_table"
 
 
-OncoRegimenFinderA1::createRegimens(connectionDetails = connectionDetails,
-                                    cdmDatabaseSchema = cdmDatabaseSchema,
-                                    writeDatabaseSchema = writeDatabaseSchema,
+OncoRegimenFinderA1::createRegimens(connectionDetails,
+                                    cdmDatabaseSchema,
+                                    writeDatabaseSchema,
                                     cohortTable = cohortTable,
-                                    regimenTable = regimenTable,
                                     rawEventTable = rawEventTable,
+                                    regimenTable = regimenTable,
                                     regimenIngredientTable = regimenIngredientTable,
                                     vocabularyTable = vocabularyTable,
-                                    drugClassificationIdInput = 21601387, #antineoplastic
+                                    addAntineoplasticAgents = TRUE,
+                                    addEndocrineTherapy = FALSE,
+                                    addImmunostimulants = FALSE,
+                                    addImmunosuppressants = FALSE,
                                     cancerConceptId = 4115276,
-                                    dateLagInput = dateLagInput,
-                                    # regimenRepeats = 5,
+                                    dateLagInput = 30,
                                     generateVocabTable = FALSE,
-                                    sampleSize = 999999999999,
-                                    generateRawEvents = FALSE)
+                                    generateRawEvents = FALSE
+)
