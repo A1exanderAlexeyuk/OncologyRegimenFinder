@@ -17,14 +17,8 @@
 #' @param regimenTable
 #' @param regimenIngredientTable
 #' @param vocabularyTable
-#' @param drugClassificationIdInput
 #' @param cancerConceptId
 #' @param generateRawEvents
-#' @param addAntineoplasticAgents
-#' @param addEndocrineTherapy
-#' @param addImmunostimulants
-#' @param addImmunosuppressants
-#'
 #'
 #' @return
 #' This function does not return a value. It is called for its side effect of
@@ -39,10 +33,6 @@ createRegimens <- function(connectionDetails,
                            regimenTable,
                            regimenIngredientTable,
                            vocabularyTable,
-                           addAntineoplasticAgents = TRUE,
-                           addEndocrineTherapy = FALSE,
-                           addImmunostimulants = FALSE,
-                           addImmunosuppressants = FALSE,
                            cancerConceptId = 4115276,
                            dateLagInput = 30,
                            generateVocabTable = FALSE,
@@ -55,11 +45,7 @@ createRegimens <- function(connectionDetails,
                     cdmDatabaseSchema,
                     writeDatabaseSchema,
                     cohortTable,
-                    regimenTable,
-                    addAntineoplasticAgents = addAntineoplasticAgents,
-                    addEndocrineTherapy = addEndocrineTherapy,
-                    addImmunostimulants = addImmunostimulants,
-                    addImmunosuppressants = addImmunosuppressants
+                    regimenTable
   )
 
   createRegimenCalculation(connection = connection,

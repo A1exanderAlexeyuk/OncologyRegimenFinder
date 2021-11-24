@@ -2,31 +2,16 @@ createCohortTable <- function(connection,
                               cdmDatabaseSchema,
                               writeDatabaseSchema,
                               cohortTable,
-                              regimenTable,
-                              addAntineoplasticAgents = TRUE,
-                              addEndocrineTherapy = TRUE,
-                              addImmunostimulants = TRUE,
-                              addImmunosuppressants = TRUE){
-  drugClassificationIdInput <- c()
-  if(addAntineoplasticAgents){
-    drugClassificationIdInput <- append(21601387, drugClassificationIdInput)
-  }
-  if(addEndocrineTherapy){
-    drugClassificationIdInput <- append(21603812, drugClassificationIdInput)
-  }
-  if(addImmunostimulants){
-    drugClassificationIdInput <- append(21603848, drugClassificationIdInput)
-  }
-  if(addImmunosuppressants){
-    drugClassificationIdInput <- append(21603890, drugClassificationIdInput)
-  }
+                              regimenTable
+                              ){
+  drugClassificationIdInput <- getIngredientsIds()
 
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           drugClassificationIdInput = drugClassificationIdInput)
+                           drugClassificationIdInput = drugClassificationIdInput$V1)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }

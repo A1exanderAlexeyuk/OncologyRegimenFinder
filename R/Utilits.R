@@ -10,3 +10,8 @@ readDbSql <- function(sql_filename, dbms) {
 getThisPackageName <- function() {
   return("OncologyRegimenFinder")
 }
+
+getIngredientsIds <- function(){
+  path <- system.file("csv", sql_filename = "ingredients_ids.csv", package = getThisPackageName(), mustWork = TRUE)
+  read.csv(path, header = F)
+}
