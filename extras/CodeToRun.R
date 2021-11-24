@@ -74,7 +74,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
     port = port,
     pathToDriver = pathToDriver)
 
-cohortDatabaseSchema <- "study_reference"
+writeDatabaseSchema <- "study_reference"
 cdmDatabaseSchema <- "full_201909_omop_v5"
 vocabularyTable <- "regimen_voc_upd"
 cohortTable <- "cancer_cohort"
@@ -82,20 +82,16 @@ regimenTable <- "cancer_regimens"
 regimenIngredientTable <- "regimen_ingredient_table"
 
 
-OncoRegimenFinderA1::createRegimens(connectionDetails,
+OncologyRegimenFinder::createRegimens(connectionDetails,
                                     cdmDatabaseSchema,
                                     writeDatabaseSchema,
-                                    cohortTable = cohortTable,
-                                    rawEventTable = rawEventTable,
-                                    regimenTable = regimenTable,
-                                    regimenIngredientTable = regimenIngredientTable,
-                                    vocabularyTable = vocabularyTable,
-                                    addAntineoplasticAgents = TRUE,
-                                    addEndocrineTherapy = FALSE,
-                                    addImmunostimulants = FALSE,
-                                    addImmunosuppressants = FALSE,
+                                    cohortTable,
+                                    rawEventTable,
+                                    regimenTable,
+                                    regimenIngredientTable,
+                                    vocabularyTable,
                                     cancerConceptId = 4115276,
                                     dateLagInput = 30,
                                     generateVocabTable = FALSE,
                                     generateRawEvents = FALSE
-)
+                                    )
