@@ -38,7 +38,7 @@ inner join @cdmDatabaseSchema.concept c on c.concept_id = ca.ancestor_concept_id
           select descendant_concept_id as drug_concept_id from @cdmDatabaseSchema.concept_ancestor ca1
           where ancestor_concept_id in (@drugClassificationIdInput) /* Drug concept_id  */
 )
-and c.concept_class_id = 'Ingredient' and de.person_id = 2104353
+and c.concept_class_id = 'Ingredient'
 )
 select cs.concept_name,
        cs.drug_era_id,

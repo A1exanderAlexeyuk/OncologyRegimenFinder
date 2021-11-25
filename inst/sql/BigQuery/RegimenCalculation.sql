@@ -36,7 +36,7 @@ updated_table AS (
 SELECT   * FROM regimens_to_keep
 UNION DISTINCT
 SELECT   person_id, drug_era_id, concept_name, ingredient_start_date
-FROM @writeDatabaseSchema.@regimenTable WHERE drug_era_id NOT IN (SELECT drug_era_id FROM regimens_to_keep) and person_id = 2104353
+FROM @writeDatabaseSchema.@regimenTable WHERE drug_era_id NOT IN (SELECT drug_era_id FROM regimens_to_keep)
 )
 
 
