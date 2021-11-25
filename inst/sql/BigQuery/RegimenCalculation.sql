@@ -39,6 +39,14 @@ ingredient_start_date
 FROM @writeDatabaseSchema.@regimenTable WHERE
 drug_era_id NOT IN (SELECT drug_era_id FROM regimens_to_keep)
 )
+
+CREATE TABLE @writeDatabaseSchema.@regimenTable_tmp (
+       person_id bigint not null,
+       drug_era_id bigint,
+       concept_name string,
+       ingredient_start_date date not null
+);
+
 SELECT person_id, drug_era_id, concept_name,
 ingredient_start_date
 INTO @writeDatabaseSchema.@regimenTable_tmp

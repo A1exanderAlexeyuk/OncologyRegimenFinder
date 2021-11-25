@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateRegimens.R
 \name{createRegimens}
 \alias{createRegimens}
-\title{Create treatment regimens of a cohort}
+\title{Create an oncology drug regimen table in a CDM database}
 \usage{
 createRegimens(
   connectionDetails,
@@ -13,38 +13,27 @@ createRegimens(
   regimenTable = regimenTable,
   regimenIngredientTable = regimenIngredientTable,
   vocabularyTable = vocabularyTable,
-  drugClassificationIdInput = 21601387,
+  addAntineoplasticAgents = TRUE,
+  addEndocrineTherapy = TRUE,
+  addImmunostimulants = TRUE,
+  addImmunosuppressants = TRUE,
   cancerConceptId = 4115276,
-  dateLagInput,
-  generateVocabTable = TRUE,
+  dateLagInput = 30,
+  generateVocabTable = FALSE,
   generateRawEvents = FALSE,
   sampleSize = 999999999999
 )
 }
 \arguments{
-\item{writeDatabaseSchema}{}
-
-\item{rawEventTable}{}
-
-\item{drugClassificationIdInput}{}
-
-\item{dateLagInput}{.}
-
-\item{generateVocabTable}{}
-
-\item{generateRawEvents}{@return
-SQL table in writeDatabaseSchema contains regimenIngredientTable.}
-
-\item{sampleSize}{}
-
-\item{Connection}{}
-
-\item{CdmDatabaseSchema}{}
-
-\item{CohortTable}{}
-
-\item{regimenRepeats}{}
+\item{addImmunosuppressants}{}
+}
+\value{
+This function does not return a value. It is called for its side effect of
+creating a new SQL table called `regimenIngredientTable` in `writeDatabaseSchema`.
 }
 \description{
-Creates treatment regimens from chosen classification code
+Creates treatment regimens from a chosen classification code. All ingredient-level
+descendants of the `drugClassificationIdInput` will be used for regimen construction.
+Multiple ingredient exposures on the same day are combined into regimens using the
+OncoRegimenFinder algorithm.
 }

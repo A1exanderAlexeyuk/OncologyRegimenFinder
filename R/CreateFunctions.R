@@ -37,7 +37,7 @@ createRawEvents <- function(connection,
                             drugClassificationIdInput,
                             dateLagInput,
                             generateRawEvents){
-  if(generateRawEvents){
+  if(generateRawEvents & connection@dbms != "bigquery"){
     sql <- SqlRender::render(sql = readDbSql("RawEvents.sql"),
                             rawEventTable = rawEventTable,
                             cancerConceptId = cancerConceptId,
@@ -47,6 +47,10 @@ createRawEvents <- function(connection,
                             dateLagInput = dateLagInput)
 
     DatabaseConnector::executeSql(connection = connection, sql = sql)
+  } else{
+
+    ParallelLogger::logInfo("Raw events are not avalible in bigquery")
+
   }
 }
 
@@ -77,7 +81,7 @@ createRegimenFormatTable <- function(connection,
                                      regimenIngredientTable,
                                      vocabularyTable = FALSE,
                                      generateVocabTable = FALSE){
-  if(generateVocabTable){
+  if(generateVocabTable & connection@dbms !='bigquery'){
     sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
   } else {
     sql_t <- readDbSql("RegimenFormatWithoutVocabulary.sql", connection@dbms)
