@@ -42,9 +42,7 @@ Features
 # *******************************************************
 # -----------------INSTRUCTIONS -------------------------
 # *******************************************************
-#
-#-----------------------------------------------------------------------------------------------
-#-----------------------------------------------------------------------------------------------
+
 ## How to Run the Study
 1. In `R`, you will build an `.Renviron` file. An `.Renviron` is an R environment file that sets variables you will be using in your code. It is encouraged to store these inside your environment so that you can protect sensitive information. Below are brief instructions on how to do this:
 
