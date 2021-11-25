@@ -21,10 +21,13 @@ createRegimenCalculation <- function(connection,
                                      regimenTable,
                                      dateLagInput
 ){
+  print('inside')
   sql <- SqlRender::render(sql = readDbSql("RegimenCalculation.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
                            dateLagInput= dateLagInput)
+  DatabaseConnector::executeSql(connection = connection, sql = sql)
+
 
 }
 
