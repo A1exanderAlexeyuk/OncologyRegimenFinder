@@ -16,7 +16,7 @@ knitr::opts_chunk$set(
 
 
 ```{r setup}
-library(OncoRegimenFinderA)
+library(OncologyRegimenFinder)
 
 ```
 
@@ -90,19 +90,19 @@ Run the regimenFinderAlgorithm
 
 
 
-library(OncoRegimenFinder)
+library(OncologuyRegimenFinder)
 
-create_regimens(connectionDetails = connectionDetails,
+createRegimens(connectionDetails = connectionDetails,
                 cdmDatabaseSchema = "main", 
                 writeDatabaseSchema = "main", 
                 cohortTable = "cohort", 
                 regimenTable = "regimen",
                 regimenIngredientTable = "regimenIngredient",
                 vocabularyTable = "regimenVocabulary", 
-                drug_classification_id_input = 21601387, # ATC code for antineoplastics 
-                date_lag_input = 30,
-                generateVocabTable = T)
-
+                 cancerConceptId = 4115276,
+                dateLagInput = 30,
+                 generateVocabTable = F,
+                  generateRawEvents = F)
 
 
 
