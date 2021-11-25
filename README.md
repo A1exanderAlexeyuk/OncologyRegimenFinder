@@ -26,18 +26,15 @@ Further, several successive data transformations take place to obtain ingredient
 Add_groups temporary table includes grouped data with highlighting the minimum start date of treatment and left join according to the start of therapy “r2.ingredient_start_date <= (r1.ingredient_start_date) and
   r2.ingredient_start_date> = (r1.ingredient_start_date - 30)”
 Thus, a table is obtained grouped according to the beginning of therapy with the capture of the 30-day interval.
-
 Next, a temporary regimens table is formed, where ingredient (1) is marked, the date of which corresponds to the minimum value in the group
-
 Then the regimens_to_keep table is formed, which selects records with label 1; then there is a union of the original table and regimens _to_keep, followed by the formation of regimenTable.
 RawEvents.sql
 Optional script that generates a table using interests and oncology of interest for possible further analysis
-
 RegimenFormat.sql
-
 Then the ingredients are aggregated into one cell according to the same therapy start date and number.
 RegimenVocabulary.sql
- An optional script, the task of which is to find a match between the found mode and the mode in HemOnc selection
+An optional script, the task of which is to find a match between the found mode and the mode in HemOnc selection
+
 Features
 ========
 *** NOTE. The grouping at the first stage was carried out after the start date - 30, there are situations when the difference between the early and subsequent groups can be less than 30 (5-10 days), this is due to the fact that the subsequent grouping date is more than 30 in relation to the first group, but in this group there may be a date that is less than 30 more than the earlier group, so there are cases when the grouping behavior is not entirely predictable. ***
