@@ -1,4 +1,4 @@
-#' Create an oncology drug regimen table in a CDM database
+#' Create an oncology drug regimen table in a `writeDatabaseSchema` database
 #'
 #' @description
 #' Creates treatment regimens from a chosen classification code. All ingredient-level
