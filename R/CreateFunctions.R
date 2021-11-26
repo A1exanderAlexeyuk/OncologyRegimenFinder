@@ -61,7 +61,9 @@ createVocabulary <- function(connection,
                              cdmDatabaseSchema,
                              vocabularyTable,
                              generateVocabTable){
-  if(generateVocabTable & connection@dbms !='bigquery'){
+  if(generateVocabTable
+    # & connection@dbms !='bigquery'
+     ){
   sql <- SqlRender::render(sql = readDbSql("RegimenVocabulary.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            cdmDatabaseSchema = cdmDatabaseSchema,
@@ -79,11 +81,13 @@ createVocabulary <- function(connection,
 createRegimenFormatTable <- function(connection,
                                      writeDatabaseSchema,
                                      cohortTable,
-                                     regimenTable,
+                                     regimenTable ,
                                      regimenIngredientTable,
-                                     vocabularyTable = FALSE,
-                                     generateVocabTable = FALSE){
-  if(generateVocabTable & connection@dbms !='bigquery'){
+                                     vocabularyTable,
+                                     generateVocabTable = T){
+  if(generateVocabTable
+  #   & connection@dbms !='bigquery'
+     ){
     sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
   } else {
     sql_t <- readDbSql("RegimenFormatWithoutVocabulary.sql", connection@dbms)
