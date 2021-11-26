@@ -73,7 +73,8 @@ createRegimens <- function(connectionDetails,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
                            regimenIngredientTable = regimenIngredientTable,
-                           vocabularyTable = vocabularyTable
+                           vocabularyTable = vocabularyTable,
+                           generateVocabTable = generateVocabTable
                            )
 
 }
