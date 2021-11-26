@@ -94,7 +94,7 @@ library(OncologyRegimenFinder)
 
 
 # Details for connecting to the server:
-dbms = Sys.getenv("DBMS")
+dbms = Sys.getenv("DBMS") # avalible only 3: redshift, bigquery, postgresql
 user <- if (Sys.getenv("DB_USER") == "") NULL else Sys.getenv("DB_USER")
 password <- if (Sys.getenv("DB_PASSWORD") == "") NULL else Sys.getenv("DB_PASSWORD")
 #password <- Sys.getenv("DB_PASSWORD")
