@@ -16,9 +16,9 @@ R files createFunctions and Utilits are a set of helper functions for createRegi
 
 The extras folder contains the CodeToRun.R file, which contains a set of requirements and necessary arguments for calling the key function of the package.
 
-Overview
+# Algorithm for the formation of `regimenIngredientTable`.
 ========
-Algorithm for the formation of `regimenIngredientTable`.
+
 ## CohortBuild.sql
 At the first stage, all use cases of patients receiving anticancer therapy (including all children of standard RxNorm concepts) are collected using the DrugEra table.
 ## RegimenCalculation.sql
