@@ -30,10 +30,12 @@ Next, a temporary regimens table is formed, where ingredient (1) is marked, the 
 Then the regimens_to_keep table is formed, which selects records with label 1; then there is a union of the original table and regimens _to_keep, followed by the formation of regimenTable.
 ## RawEvents.sql
 Optional script that generates a table using interests and oncology of interest for possible further analysis
-## RegimenFormat.sql
-Then the ingredients are aggregated into one cell according to the same therapy start date and number. Then the max end date of ingredient will be put as the end of the regimen 
+
 ## RegimenVocabulary.sql
-An optional script, the task of which is to find a match between the found mode and the mode in HemOnc selection (not avalible in bigquery)
+An optional script, the task of which is to find a match between the found mode and the mode in HemOnc selection (need to make sure that you have apdated hemonc vocabulary)
+
+## RegimenFormat.sql (optionally with or without hemonc vocabulary)
+Then the ingredients are aggregated into one cell according to the same therapy start date and number. Then the max end date of ingredient will be put as the end of the regimen 
 
 # *******************************************************
 # -----------------INSTRUCTIONS -------------------------
