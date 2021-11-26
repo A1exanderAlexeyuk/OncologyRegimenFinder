@@ -1,12 +1,12 @@
 DROP TABLE IF EXISTS @writeDatabaseSchema.regimenTable_tmp;
-CREATE TABLE @writeDatabaseSchema.@regimenTable_tmp (
+CREATE TABLE @writeDatabaseSchema.regimenTable_tmp (
        person_id bigint not null,
        drug_era_id bigint,
        concept_name string,
        ingredient_start_date date not null
 );
 
-INSERT INTO @writeDatabaseSchema.@regimenTable_tmp (
+INSERT INTO @writeDatabaseSchema.regimenTable_tmp (
    person_id, drug_era_id, concept_name,
 ingredient_start_date
 )
@@ -55,10 +55,10 @@ CREATE TABLE @writeDatabaseSchema.@regimenTable (
        ingredient_start_date date not null
 ) ;
 
-INSERT INTO @writeDatabaseSchema.regimenTable (
+INSERT INTO @writeDatabaseSchema.@regimenTable (
    SELECT person_id, drug_era_id, concept_name,
-ingredient_start_date
-FROM @writeDatabaseSchema.@regimenTable_tmp
+    ingredient_start_date
+FROM @writeDatabaseSchema.regimenTable_tmp
 )
 ;
 DROP TABLE IF EXISTS @writeDatabaseSchema.regimenTable_tmp;
