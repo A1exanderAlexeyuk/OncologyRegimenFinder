@@ -19,20 +19,20 @@ The extras folder contains the CodeToRun.R file, which contains a set of require
 Overview
 ========
 Algorithm for the formation of `regimenIngredientTable`.
-CohortBuild.sql
+## CohortBuild.sql
 At the first stage, all use cases of patients receiving anticancer therapy (including all children of standard RxNorm concepts) are collected using the DrugEra table.
-RegimenCalculation.sql
+## RegimenCalculation.sql
 Further, several successive data transformations take place to obtain ingredients grouped by dates, which will subsequently be combined into modes.
 Add_groups temporary table includes grouped data with highlighting the minimum start date of treatment and left join according to the start of therapy “r2.ingredient_start_date <= (r1.ingredient_start_date) and
   r2.ingredient_start_date> = (r1.ingredient_start_date - 30)”
 Thus, a table is obtained grouped according to the beginning of therapy with the capture of the 30-day interval.
 Next, a temporary regimens table is formed, where ingredient (1) is marked, the date of which corresponds to the minimum value in the group
 Then the regimens_to_keep table is formed, which selects records with label 1; then there is a union of the original table and regimens _to_keep, followed by the formation of regimenTable.
-RawEvents.sql
+## RawEvents.sql
 Optional script that generates a table using interests and oncology of interest for possible further analysis
-RegimenFormat.sql
+## RegimenFormat.sql
 Then the ingredients are aggregated into one cell according to the same therapy start date and number.
-RegimenVocabulary.sql
+## RegimenVocabulary.sql
 An optional script, the task of which is to find a match between the found mode and the mode in HemOnc selection
 
 # *******************************************************
