@@ -18,7 +18,17 @@ select c1.concept_name as reg_name,
 from @cdmDatabaseSchema.concept_relationship
 join @cdmDatabaseSchema.concept c1 on c1.concept_id=concept_id_1
 join @cdmDatabaseSchema.concept c2 on c2.concept_id=concept_id_2
-		where c1.vocabulary_id='HemOnc' and relationship_id='Has antineoplastic'
+		where c1.vocabulary_id='HemOnc' and relationship_id IN ('Has AB-drug cjgt',
+                                'Has cytotox chemo',
+                                'Has endocrine tx',
+                                'Has immunotherapy',
+                                'Has pept-drg cjg',
+                                'Has radiocjgt',
+                                'Has radiotherapy',
+                                'Has targeted tx',
+                                'Has antineopl',
+                                'Has immunosuppr')
+
 group by c1.concept_name,c1.concept_id
 order by c1.concept_name
 ),
@@ -30,14 +40,12 @@ from CTE c
 order by rank_ desc
 ),
 CTE_third as (
-select *, min(rank_) over (partition by combo_name) as rank_
+select *, min(rank_) over (partition by combo_name) as rank
 from CTE_second
 ),
 CTE_fourth as (
-select ct.reg_name, ct.combo_name, ct.concept_id
+select ct.reg_name, ct.combo_name, ct.concept_id, min(rank) over (partition by combo_name)
 from CTE_third ct
-where rank_ = min
 )
 
-
-SELECT * FROM CTE_fourth
+SELECT reg_name, combo_name, concept_id FROM CTE_fourth
