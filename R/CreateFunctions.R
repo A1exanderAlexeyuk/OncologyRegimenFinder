@@ -11,7 +11,7 @@ createCohortTable <- function(connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           drugClassificationIdInput = drugClassificationIdInput$V1)
+                           drugClassificationIdInput = t2)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
@@ -21,6 +21,7 @@ createRegimenCalculation <- function(connection,
                                      regimenTable,
                                      dateLagInput
 ){
+  print('inside')
   sql <- SqlRender::render(sql = readDbSql("RegimenCalculation.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
@@ -84,7 +85,7 @@ createRegimenFormatTable <- function(connection,
                                      regimenTable ,
                                      regimenIngredientTable,
                                      vocabularyTable,
-                                     generateVocabTable = T){
+                                     generateVocabTable = F){
   if(generateVocabTable
   #   & connection@dbms !='bigquery'
      ){
