@@ -51,4 +51,4 @@ select ct.reg_name, ct.combo_name, ct.concept_id, min(rank) over (partition by c
 from CTE_third ct
 )
 
-SELECT reg_name, combo_name, concept_id FROM CTE_fourth
+SELECT distinct reg_name, combo_name, concept_id FROM CTE_fourth
