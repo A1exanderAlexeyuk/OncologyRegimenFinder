@@ -13,5 +13,5 @@ getThisPackageName <- function() {
 
 getIngredientsIds <- function(){
   path <- system.file("csv", sql_filename = "distIds.csv", package = getThisPackageName(), mustWork = TRUE)
-  read.csv(path, header = F)
+  read.csv(path)
 }
