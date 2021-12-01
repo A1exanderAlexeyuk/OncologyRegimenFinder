@@ -36,6 +36,6 @@ select ct.reg_name, ct.combo_name, ct.concept_id
 from CTE_third ct
 where rank = min
 )
-select *
+select distinct *
 into @writeDatabaseSchema.@vocabularyTable
 from CTE_fourth
