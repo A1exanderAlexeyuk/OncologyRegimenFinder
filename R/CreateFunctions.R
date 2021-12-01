@@ -4,6 +4,7 @@ createCohortTable <- function(connection,
                               cohortTable,
                               regimenTable
                               ){
+  
   drugClassificationIdInput <- getIngredientsIds()
 
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
@@ -11,7 +12,7 @@ createCohortTable <- function(connection,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           drugClassificationIdInput = t2)
+                           drugClassificationIdInput = drugClassificationIdInput$V1)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
@@ -21,7 +22,6 @@ createRegimenCalculation <- function(connection,
                                      regimenTable,
                                      dateLagInput
 ){
-  print('inside')
   sql <- SqlRender::render(sql = readDbSql("RegimenCalculation.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
