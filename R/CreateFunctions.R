@@ -4,7 +4,7 @@ createCohortTable <- function(connection,
                               cohortTable,
                               regimenTable
                               ){
-  
+
   drugClassificationIdInput <- getIngredientsIds()
 
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
@@ -37,19 +37,24 @@ createRawEvents <- function(connection,
                             cancerConceptId,
                             writeDatabaseSchema ,
                             cdmDatabaseSchema,
-                            drugClassificationIdInput,
                             dateLagInput,
                             generateRawEvents){
-  if(generateRawEvents & connection@dbms != "bigquery"){
-    sql <- SqlRender::render(sql = readDbSql("RawEvents.sql"),
+
+  if(generateRawEvents
+     #& connection@dbms != "bigquery"
+     ){
+    drugClassificationIdInput <- getIngredientsIds()
+
+    sql <- SqlRender::render(sql = readDbSql("RawEvents.sql", connection@dbms),
                             rawEventTable = rawEventTable,
                             cancerConceptId = cancerConceptId,
                             writeDatabaseSchema = writeDatabaseSchema,
                             cdmDatabaseSchema = cdmDatabaseSchema,
-                            drugClassificationIdInput = drugClassificationIdInput,
+                            drugClassificationIdInput = drugClassificationIdInput$V1,
                             dateLagInput = dateLagInput)
 
     DatabaseConnector::executeSql(connection = connection, sql = sql)
+
   } else{
 
     ParallelLogger::logInfo("Raw events are not avalible in bigquery")
@@ -62,6 +67,7 @@ createVocabulary <- function(connection,
                              cdmDatabaseSchema,
                              vocabularyTable,
                              generateVocabTable){
+  print('inside1')
   if(generateVocabTable
     # & connection@dbms !='bigquery'
      ){
@@ -91,6 +97,7 @@ createRegimenFormatTable <- function(connection,
      ){
     sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
   } else {
+    print('inside2')
     sql_t <- readDbSql("RegimenFormatWithoutVocabulary.sql", connection@dbms)
   }
   try(sql <- SqlRender::render(sql = sql_t,

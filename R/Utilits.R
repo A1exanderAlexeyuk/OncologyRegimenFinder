@@ -3,7 +3,8 @@ readDbSql <- function(sql_filename, dbms) {
   if(!(dbms %in% supported_dbms)) {
     stop(paste(dbms, "is not a supported database. \nSupported dbms are", paste(supported_dbms, collapse = ", "), "."))
   }
-  path <- system.file("sql", dbms, sql_filename, package = getThisPackageName(), mustWork = TRUE)
+  package <- getThisPackageName()
+  path <- system.file("sql", dbms, sql_filename, package = package, mustWork = TRUE)
   SqlRender::readSql(path)
 }
 
@@ -15,3 +16,5 @@ getIngredientsIds <- function(){
   path <- system.file("csv", sql_filename = "distIds.csv", package = getThisPackageName(), mustWork = TRUE)
   read.csv(path)
 }
+
+

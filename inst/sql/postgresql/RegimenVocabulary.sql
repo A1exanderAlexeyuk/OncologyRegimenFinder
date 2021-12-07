@@ -1,3 +1,4 @@
+DROP TABLE IF EXISTS @writeDatabaseSchema.@vocabularyTable;
 with CTE as (
 select c1.concept_name as reg_name,
 		 string_agg(lower(c2.concept_name), ',' order by lower(c2.concept_name) asc) as combo_name,

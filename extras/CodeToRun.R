@@ -77,7 +77,7 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 writeDatabaseSchema <- "study_reference"
 cdmDatabaseSchema <- "full_201909_omop_v5"
 vocabularyTable <- "regimen_voc_upd"
-cohortTable <- "cancer_cohort"
+cohortTable <- "regimen_cohort"
 regimenTable <- "cancer_regimens"
 regimenIngredientTable <- "regimen_ingredient_table"
 

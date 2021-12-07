@@ -58,7 +58,6 @@ createRegimens <- function(connectionDetails,
                   cancerConceptId = cancerConceptId,
                   writeDatabaseSchema = writeDatabaseSchema,
                   cdmDatabaseSchema = cdmDatabaseSchema,
-                  drugClassificationIdInput = drugClassificationIdInput,
                   dateLagInput = dateLagInput,
                   generateRawEvents = generateRawEvents)
 
