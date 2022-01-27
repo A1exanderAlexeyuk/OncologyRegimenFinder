@@ -19,6 +19,7 @@
 #' @param vocabularyTable
 #' @param cancerConceptId
 #' @param generateRawEvents
+#' @param keepSteroids Boolean parameter if TRUE algorithm will look for steroids along other drugs
 #'
 #' @return
 #' This function does not return a value. It is called for its side effect of
@@ -36,7 +37,8 @@ createRegimens <- function(connectionDetails,
                            cancerConceptId = 4115276,
                            dateLagInput = 30,
                            generateVocabTable = FALSE,
-                           generateRawEvents = FALSE
+                           generateRawEvents = FALSE,
+                           keepSteroids = FALSE
                            ){
 
   connection <-  DatabaseConnector::connect(connectionDetails)
@@ -45,7 +47,8 @@ createRegimens <- function(connectionDetails,
                     cdmDatabaseSchema,
                     writeDatabaseSchema,
                     cohortTable,
-                    regimenTable
+                    regimenTable,
+                    keepSteroids
   )
 
   createRegimenCalculation(connection = connection,

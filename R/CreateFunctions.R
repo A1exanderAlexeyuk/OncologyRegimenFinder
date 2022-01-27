@@ -2,17 +2,20 @@ createCohortTable <- function(connection,
                               cdmDatabaseSchema,
                               writeDatabaseSchema,
                               cohortTable,
-                              regimenTable
-                              ){
-
-  drugClassificationIdInput <- getIngredientsIds()
-
+                              regimenTable,
+                              keepSteroids
+                              ) {
+if(keepSteroids) {
+  drugClassificationIdInput <- getIngredientsIdsWithSteroids()
+} else {
+  drugClassificationIdInput <- getIngredientsIdsWithoutSteroids()
+}
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           drugClassificationIdInput = drugClassificationIdInput$V1)
+                           drugClassificationIdInput = drugClassificationIdInput)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
@@ -21,7 +24,7 @@ createRegimenCalculation <- function(connection,
                                      writeDatabaseSchema,
                                      regimenTable,
                                      dateLagInput
-){
+) {
   sql <- SqlRender::render(sql = readDbSql("RegimenCalculation.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            regimenTable = regimenTable,
@@ -67,17 +70,14 @@ createVocabulary <- function(connection,
                              cdmDatabaseSchema,
                              vocabularyTable,
                              generateVocabTable){
-  print('inside1')
-  if(generateVocabTable
-    # & connection@dbms !='bigquery'
-     ){
+  if(generateVocabTable) {
   sql <- SqlRender::render(sql = readDbSql("RegimenVocabulary.sql", connection@dbms),
                            writeDatabaseSchema = writeDatabaseSchema,
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            vocabularyTable = vocabularyTable)
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
-  } else{
+  } else {
 
     ParallelLogger::logInfo("Vocabulary will not be created")
 
