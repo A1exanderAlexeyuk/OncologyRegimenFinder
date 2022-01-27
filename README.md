@@ -133,5 +133,6 @@ OncologyRegimenFinder::createRegimens(connectionDetails,
                                     cancerConceptId = 4115276,
                                     dateLagInput = 30,
                                     generateVocabTable = FALSE,
-                                    generateRawEvents = FALSE
+                                    generateRawEvents = FALSE,
+                                    keepSteroids = FALSE
                                     )
