@@ -1,21 +1,34 @@
+
+
+
 createCohortTable <- function(connection,
                               cdmDatabaseSchema,
                               writeDatabaseSchema,
                               cohortTable,
                               regimenTable,
-                              keepSteroids
+                              keepSteroids,
+                              useHemoncToPullDrugs
                               ) {
-if(keepSteroids) {
-  drugClassificationIdInput <- getIngredientsIdsWithSteroids()
-} else {
-  drugClassificationIdInput <- getIngredientsIdsWithoutSteroids()
+  if(!useHemoncToPullDrugs) {
+    drugClassificationIdInput <-  ifelse(keepSteroids,
+                                         getIngredientsIdsWithSteroids(),
+                                         getIngredientsIdsWithoutSteroids())
+  } else {
+    drugClassificationIdInput <- getHemoncIngredients(
+    connection = connection,
+    cdmDatabaseSchema = cdmDatabaseSchema,
+    keepSteroids = keepSteroids
+  )
 }
+
+
   sql <- SqlRender::render(sql = readDbSql("CohortBuild.sql", connection@dbms),
                            cdmDatabaseSchema = cdmDatabaseSchema,
                            writeDatabaseSchema = writeDatabaseSchema,
                            cohortTable = cohortTable,
                            regimenTable = regimenTable,
-                           drugClassificationIdInput = drugClassificationIdInput)
+                           drugClassificationIdInput = drugClassificationIdInput
+                           )
 
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 }
@@ -58,7 +71,7 @@ createRawEvents <- function(connection,
 
     DatabaseConnector::executeSql(connection = connection, sql = sql)
 
-  } else{
+  } else {
 
     ParallelLogger::logInfo("Raw events are not avalible in bigquery")
 
@@ -92,12 +105,9 @@ createRegimenFormatTable <- function(connection,
                                      regimenIngredientTable,
                                      vocabularyTable,
                                      generateVocabTable = F){
-  if(generateVocabTable
-  #   & connection@dbms !='bigquery'
-     ){
+  if(generateVocabTable) {
     sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
   } else {
-    print('inside2')
     sql_t <- readDbSql("RegimenFormatWithoutVocabulary.sql", connection@dbms)
   }
   try(sql <- SqlRender::render(sql = sql_t,

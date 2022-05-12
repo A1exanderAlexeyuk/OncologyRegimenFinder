@@ -1,10 +1,7 @@
 #' Create an oncology drug regimen table in a `writeDatabaseSchema` database
 #'
 #' @description
-#' Creates treatment regimens from a chosen classification code. All ingredient-level
-#' descendants of the `drugClassificationIdInput` will be used for regimen construction.
-#' Multiple ingredient exposures on the same day are combined into regimens using the
-#' OncoRegimenFinder algorithm.
+#' Creates treatment regimens
 #'
 #' @param connectionDetails
 #' @param writeDatabaseSchema
@@ -38,8 +35,12 @@ createRegimens <- function(connectionDetails,
                            dateLagInput = 30,
                            generateVocabTable = FALSE,
                            generateRawEvents = FALSE,
-                           keepSteroids = FALSE
+                           keepSteroids = FALSE,
+                           useHemoncToPullDrugs = FALSE
                            ){
+
+
+
 
   connection <-  DatabaseConnector::connect(connectionDetails)
 
@@ -48,7 +49,8 @@ createRegimens <- function(connectionDetails,
                     writeDatabaseSchema,
                     cohortTable,
                     regimenTable,
-                    keepSteroids
+                    keepSteroids,
+                    useHemoncToPullDrugs
   )
 
   createRegimenCalculation(connection = connection,
@@ -80,3 +82,25 @@ createRegimens <- function(connectionDetails,
                            )
 
 }
+
+
+#' @export
+#'
+#'
+getHemoncIngredients <- function(
+  connection,
+  cdmDatabaseSchema,
+  keepSteroids = FALSE
+
+) {
+  sql <- SqlRender::loadRenderTranslateSql(
+    sqlFilename = "FetchDrugConceptIds.sql",
+    packageName = getThisPackageName(),
+    cdmDatabaseSchema = cdmDatabaseSchema,
+    commentSteroids = ifelse(keepSteroids, '', '--')
+  )
+  DatabaseConnector::querySql(
+    connection,
+    sql = sql
+    )$CONCEPT_ID_2
+  }

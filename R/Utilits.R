@@ -13,11 +13,19 @@ getThisPackageName <- function() {
 }
 
 getIngredientsIdsWithSteroids <- function(){
-  path <- system.file("csv", sql_filename = "distIdsWithoutSupportiveWithSteroids.csv", package = getThisPackageName(), mustWork = TRUE)
+  path <- system.file("csv",
+                      sql_filename = "distIdsWithoutSupportiveWithSteroids.csv",
+                      package = getThisPackageName(),
+                      mustWork = TRUE)
   read.csv(path)$x
 }
 
 getIngredientsIdsWithoutSteroids <- function(){
-  path <- system.file("csv", sql_filename = "distIdsWithoutSupportiveAndSteroids.csv", package = getThisPackageName(), mustWork = TRUE)
+  path <- system.file("csv",
+                      sql_filename = "distIdsWithoutSupportiveAndSteroids.csv",
+                      package = getThisPackageName(),
+                      mustWork = TRUE)
   read.csv(path)$x
 }
+
+
