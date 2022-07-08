@@ -36,6 +36,11 @@ createRegimens <- function(connectionDetails,
                            generateVocabTable = FALSE,
                            generateRawEvents = FALSE,
                            keepSteroids = FALSE,
+                           useHemoncToPullDrugs = FALSE,
+                           createEpisodeTable = FALSE,
+                           createEpisodeEventTable = FALSE,
+                           episodeTypeConceptId = 32545,
+                           eventTableConceptId = 1147094,
                            useHemoncToPullDrugs = FALSE
                            ){
 
@@ -80,6 +85,26 @@ createRegimens <- function(connectionDetails,
                            vocabularyTable = vocabularyTable,
                            generateVocabTable = generateVocabTable
                            )
+  if(createEpisodeTable) {
+    createEpisodeTable(
+      connection = connection,
+      writeDatabaseSchema = writeDatabaseSchema,
+      regimenIngredientTable = regimenIngredientTable,
+      episodeTypeConceptId = episodeTypeConceptId,
+      cdmDatabaseSchema = cdmDatabaseSchema
+    )
+  }
+
+  if(createEpisodeEventTable) {
+    createEpisodeEventTable(
+      connection = connection,
+      writeDatabaseSchema = writeDatabaseSchema,
+      regimenIngredientTable = regimenIngredientTable,
+      eventTableConceptId = eventTableConceptId,
+      cdmDatabaseSchema = cdmDatabaseSchema
+    )
+  }
+
 
 }
 

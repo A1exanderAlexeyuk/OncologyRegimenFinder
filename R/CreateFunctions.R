@@ -104,7 +104,12 @@ createRegimenFormatTable <- function(connection,
                                      regimenTable ,
                                      regimenIngredientTable,
                                      vocabularyTable,
+<<<<<<< HEAD
+                                     generateVocabTable = F
+                                     ) {
+=======
                                      generateVocabTable = F){
+>>>>>>> 0a9f812c4ae5f5bd38553986a928c16c1632d84c
   if(generateVocabTable) {
     sql_t <- readDbSql("RegimenFormat.sql", connection@dbms)
   } else {
@@ -121,3 +126,6 @@ createRegimenFormatTable <- function(connection,
   DatabaseConnector::executeSql(connection = connection, sql = sql)
 
 }
+
+
+
