@@ -4,7 +4,7 @@
 #
 #-----------------------------------------------------------------------------------------------
 #-----------------------------------------------------------------------------------------------
-# This CodeToRun.R is provided as an example of how to run this study package.
+# This CodeToRun.R is provided as an example of how to run this package.
 # Below you will find 2 sections: the 1st is for installing the dependencies
 # required to run the study and the 2nd for running the package.
 #
@@ -47,16 +47,16 @@
 # *******************************************************
 # SECTION 1: Install the package and its dependencies (not needed if already done) -------------
 # *******************************************************
-devtools::install_github("OHDSI/DatabaseConnector")
+remotes::install_github("OHDSI/DatabaseConnector")
 library(DatabaseConnector)
-devtools::install_github("OHDSI/SqlRender")
+remotes::install_github("OHDSI/SqlRender")
 library(SqlRender)
-devtools::install_github("A1exanderAlexeyuk/OncologyRegimenFinder")
+remotes::install_github("A1exanderAlexeyuk/OncologyRegimenFinder")
 library(OncologyRegimenFinder)
 
 
 # Details for connecting to the server:
-dbms = Sys.getenv("DBMS")
+dbms = Sys.getenv("DBMS") # avalible only 3: redshift, bigquery, postgresql
 user <- if (Sys.getenv("DB_USER") == "") NULL else Sys.getenv("DB_USER")
 password <- if (Sys.getenv("DB_PASSWORD") == "") NULL else Sys.getenv("DB_PASSWORD")
 #password <- Sys.getenv("DB_PASSWORD")
@@ -77,22 +77,31 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
 writeDatabaseSchema <- "study_reference"
 cdmDatabaseSchema <- "full_201909_omop_v5"
 vocabularyTable <- "regimen_voc_upd"
-cohortTable <- "regimen_cohort"
+cohortTable <- "cancer_cohort"
 regimenTable <- "cancer_regimens"
 regimenIngredientTable <- "regimen_ingredient_table"
-
-
-OncologyRegimenFinder::createRegimens(connectionDetails,
-                                    cdmDatabaseSchema,
-                                    writeDatabaseSchema,
-                                    cohortTable,
-                                    rawEventTable,
-                                    regimenTable,
-                                    regimenIngredientTable,
-                                    vocabularyTable,
-                                    cancerConceptId = 4115276,
-                                    dateLagInput = 30,
-                                    generateVocabTable = FALSE,
-                                    generateRawEvents = FALSE,
-                                    keepSteroids = FALSE
-                                    )
+episodeTypeConceptId <- 32545
+episodeEventTableConceptId <- 1147094
+useHemoncToPullDrugs = TRUE # if TRUE drug concept_ids will be collected from HemOnc, otherwise from internal csv
+writeToEpisodeTable = TRUE # if TRUE delete where episode_type_concept_id = episodeTypeConceptId  (old records) and insert updated info
+writeToEpisodeEventTable = TRUE #if TRUE delete where episode_event_table_concept_id = episodeEventTableConceptId (old records) and insert       #updated info
+OncologyRegimenFinder::createRegimens(
+    connectionDetails,
+    cdmDatabaseSchema,
+    writeDatabaseSchema,
+    cohortTable,
+    rawEventTable,
+    regimenTable,
+    regimenIngredientTable,
+    vocabularyTable,
+    cancerConceptId = 4115276,
+    dateLagInput = 30,
+    generateVocabTable = T,
+    generateRawEvents = FALSE,
+    keepSteroids = FALSE,
+    useHemoncToPullDrugs,
+    episodeTypeConceptId,
+    episodeEventTableConceptId,
+    writeToEpisodeTable,
+    writeToEpisodeEventTable
+)
