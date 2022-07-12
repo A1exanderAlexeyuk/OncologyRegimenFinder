@@ -37,9 +37,9 @@ An optional script, the task of which is to find a match between the found mode 
 ## RegimenFormat.sql (optionally with or without hemonc vocabulary)
 Then the ingredients are aggregated into one cell according to the same therapy start date and number. Then the max end date of ingredient will be put as the end of the regimen 
 
-#*******************************************************
-# ----------------- INSTRUCTIONS -------------------------
-#*******************************************************
+# *******************************************************
+# -----------------INSTRUCTIONS -------------------------
+# *******************************************************
 
 ## How to Run the Study
 1. In `R`, you will build an `.Renviron` file. An `.Renviron` is an R environment file that sets variables you will be using in your code. It is encouraged to store these inside your environment so that you can protect sensitive information. Below are brief instructions on how to do this:
@@ -87,11 +87,11 @@ Then the ingredients are aggregated into one cell according to the same therapy 
 3. Great work! Now you have set-up your environment and installed the library that will run the package. You can use the following `R` script to load in your library and configure your environment connection details:
 
 ```
-devtools::install_github("OHDSI/DatabaseConnector")
+remotes::install_github("OHDSI/DatabaseConnector")
 library(DatabaseConnector)
-devtools::install_github("OHDSI/SqlRender")
+remotes::install_github("OHDSI/SqlRender")
 library(SqlRender)
-devtools::install_github("A1exanderAlexeyuk/OncologyRegimenFinder")
+remotes::install_github("A1exanderAlexeyuk/OncologyRegimenFinder")
 library(OncologyRegimenFinder)
 
 
@@ -120,19 +120,29 @@ vocabularyTable <- "regimen_voc_upd"
 cohortTable <- "cancer_cohort"
 regimenTable <- "cancer_regimens"
 regimenIngredientTable <- "regimen_ingredient_table"
-
-
-OncologyRegimenFinder::createRegimens(connectionDetails,
-                                    cdmDatabaseSchema,
-                                    writeDatabaseSchema,
-                                    cohortTable,
-                                    rawEventTable,
-                                    regimenTable,
-                                    regimenIngredientTable,
-                                    vocabularyTable,
-                                    cancerConceptId = 4115276,
-                                    dateLagInput = 30,
-                                    generateVocabTable = FALSE,
-                                    generateRawEvents = FALSE,
-                                    keepSteroids = FALSE
-                                    )
+episodeTypeConceptId <- 32545
+episodeEventTableConceptId <- 1147094
+useHemoncToPullDrugs = TRUE # if TRUE drug concept_ids will be collected from HemOnc, otherwise from internal csv
+writeToEpisodeTable = TRUE # if TRUE delete where episode_type_concept_id = episodeTypeConceptId  (old records) and insert updated info
+writeToEpisodeEventTable = TRUE #if TRUE delete where episode_event_table_concept_id = episodeEventTableConceptId (old records) and insert       #updated info 
+OncologyRegimenFinder::createRegimens(
+    connectionDetails,
+    cdmDatabaseSchema,
+    writeDatabaseSchema,
+    cohortTable,
+    rawEventTable,
+    regimenTable,
+    regimenIngredientTable,
+    vocabularyTable,
+    cancerConceptId = 4115276,
+    dateLagInput = 30,
+    generateVocabTable = T,
+    generateRawEvents = FALSE,
+    keepSteroids = FALSE,
+    useHemoncToPullDrugs,
+    episodeTypeConceptId,
+    episodeEventTableConceptId,
+    writeToEpisodeTable,
+    writeToEpisodeEventTable
+)
+```
