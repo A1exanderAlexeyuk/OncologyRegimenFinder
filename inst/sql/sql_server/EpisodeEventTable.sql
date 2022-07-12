@@ -3,23 +3,18 @@
 -- -------------------------------------------------------------------
 DELETE FROM @cdmDatabaseSchema.episode_event *
 WHERE event_table_concept_id
-IN (@eventTableConceptId);
+IN (@episodeEventTableConceptId);
 
 INSERT INTO @cdmDatabaseSchema.episode_event
-(
-    episode_id,
-    event_id,
-    event_table_concept_id
-)
 SELECT
     ep.episode_id                   AS episode_id,
     dr.drug_exposure_id             AS event_id,
     --1147094
-    @eventTableConceptId AS event_table_concept_id   -- 'drug_exposure.drug_exposure_id'
+    @episodeEventTableConceptId AS event_table_concept_id   -- 'drug_exposure.drug_exposure_id'
 FROM
     @writeDatabaseSchema.@cancerRegimenIngredients src
 INNER JOIN
-    @cdmDatabaseSchema.@episodeTable ep
+    @cdmDatabaseSchema.episode ep
         ON  ep.person_id = src.person_id
         AND ep.episode_object_concept_id = COALESCE(src.hemonc_concept_id, 0)
         AND ep.episode_start_datetime = src.regimen_start_date
