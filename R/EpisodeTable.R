@@ -1,7 +1,7 @@
 #' @export
 #'
 #'
-createEpisodeTable <- function(
+writeToEpisodeTable <- function(
   connection,
   writeDatabaseSchema,
   regimenIngredientTable,
@@ -27,12 +27,11 @@ createEpisodeTable <- function(
 
 #' @export
 #'
-#'
-createEpisodeEventTable <- function(
+writeToEpisodeEventTable <- function(
   connection,
   writeDatabaseSchema,
   regimenIngredientTable,
-  eventTableConceptId,
+  episodeEventTableConceptId,
   cdmDatabaseSchema
 ) {
 
@@ -42,7 +41,7 @@ createEpisodeEventTable <- function(
     cancerRegimenIngredients = regimenIngredientTable,
     writeDatabaseSchema = writeDatabaseSchema,
     cdmDatabaseSchema = cdmDatabaseSchema,
-    eventTableConceptId = eventTableConceptId
+    episodeEventTableConceptId = episodeEventTableConceptId
   )
 
   DatabaseConnector::executeSql(

@@ -17,6 +17,9 @@
 #' @param cancerConceptId
 #' @param generateRawEvents
 #' @param keepSteroids Boolean parameter if TRUE algorithm will look for steroids along other drugs
+#' @param useHemoncToPullDrugs Boolean parameter if TRUE algorithm will use HemOnc vocabulary as a source of ingredients otherwise - internal csv
+#' @param writeToEpisodeTable Boolean parameter if TRUE algorithm will delete form episode table with `episodeTypeConceptId` and insert `regimenIngredientTable` rows with `episodeTypeConceptId`
+#' @param writeToEpisodeEventTable Boolean parameter if TRUE algorithm will delete form episode_event table with `episodeEventTableConceptId` and insert `regimenIngredientTable` rows with `episodeEventTableConceptId`
 #'
 #' @return
 #' This function does not return a value. It is called for its side effect of
@@ -37,12 +40,11 @@ createRegimens <- function(connectionDetails,
                            generateRawEvents = FALSE,
                            keepSteroids = FALSE,
                            useHemoncToPullDrugs = FALSE,
-                           createEpisodeTable = FALSE,
-                           createEpisodeEventTable = FALSE,
+                           writeToEpisodeTable = FALSE,
+                           writeToEpisodeEventTable = FALSE,
                            episodeTypeConceptId = 32545,
-                           eventTableConceptId = 1147094,
-                           useHemoncToPullDrugs = FALSE
-                           ){
+                           episodeEventTableConceptId = 1147094
+                           ) {
 
 
 
@@ -85,8 +87,8 @@ createRegimens <- function(connectionDetails,
                            vocabularyTable = vocabularyTable,
                            generateVocabTable = generateVocabTable
                            )
-  if(createEpisodeTable) {
-    createEpisodeTable(
+  if(writeToEpisodeTable) {
+    writeToEpisodeTable(
       connection = connection,
       writeDatabaseSchema = writeDatabaseSchema,
       regimenIngredientTable = regimenIngredientTable,
@@ -95,12 +97,12 @@ createRegimens <- function(connectionDetails,
     )
   }
 
-  if(createEpisodeEventTable) {
-    createEpisodeEventTable(
+  if(writeToEpisodeEventTable) {
+    writeToEpisodeEventTable(
       connection = connection,
       writeDatabaseSchema = writeDatabaseSchema,
       regimenIngredientTable = regimenIngredientTable,
-      eventTableConceptId = eventTableConceptId,
+      episodeEventTableConceptId = episodeEventTableConceptId,
       cdmDatabaseSchema = cdmDatabaseSchema
     )
   }
